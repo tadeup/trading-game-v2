@@ -1,26 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import { Provider } from 'react-redux'
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
+
+import { store } from "./Config/Redux/configureStore";
+import { rrfProps } from "./Config/Firebase";
+import indexRoutes from "./Config/Router";
+
+const App = () => (
+    <Provider store={store}>
+        <ReactReduxFirebaseProvider {...rrfProps}>
+            <BrowserRouter>
+                <Switch>
+                    { indexRoutes.map((prop, key) => {return <Route path={prop.path} key={key} component={prop.component}/>}) }
+                </Switch>
+            </BrowserRouter>
+        </ReactReduxFirebaseProvider>
+    </Provider>
+);
 
 export default App;

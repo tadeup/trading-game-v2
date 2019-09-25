@@ -1,4 +1,4 @@
-import TradePage from '../../Views/TradePage';
+import HomePage from '../../Views/HomePage';
 import LoginPage from '../../Views/LoginPage';
 // import NotFoundPage from '../views/NotFoundPage'
 
@@ -10,7 +10,7 @@ const indexRoutes = [
   { path: "/login", name: "LoginPage", component: LoginPage },
 
   // home path must come last
-  { path: "/", name: "TradePage", component: TradePage },
+  { path: "/", name: "HomePage", component: HomePage },
 ];
 
 export default indexRoutes;

@@ -5,7 +5,7 @@ import { compose } from 'redux'
 import {firestoreConnect, firebaseConnect, isLoaded, isEmpty} from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import { withStyles } from "@material-ui/core";
+import {Container, withStyles} from "@material-ui/core";
 import { styles } from "./styles";
 import Loader from "../../Components/Loader";
 import {Redirect, Switch, Route} from "react-router-dom";
@@ -13,7 +13,7 @@ import homeRoutes from "../../Config/Router/homeRoutes";
 import Navbar from "../../Components/Navbar";
 
 // STATELESS
-const HomePage = ({auth}) => {
+const HomePage = ({auth, classes}) => {
   if (!isLoaded(auth)) {
     return <Loader/>
   }
@@ -26,9 +26,11 @@ const HomePage = ({auth}) => {
       <>
         <CssBaseline/>
         <Navbar/>
-        <Switch>
-          { homeRoutes.map((prop, key) => {return <Route path={prop.path} key={key} component={prop.component}/>}) }
-        </Switch>
+        <Container maxWidth={'lg'} className={classes.container}>
+          <Switch>
+            { homeRoutes.map((prop, key) => {return <Route path={prop.path} key={key} component={prop.component}/>}) }
+          </Switch>
+        </Container>
       </>
   );
 };

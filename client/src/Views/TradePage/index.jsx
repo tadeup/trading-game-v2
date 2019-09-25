@@ -6,6 +6,7 @@ import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
 import { withStyles } from "@material-ui/core";
 import { styles } from "./styles";
+import Book from "../../Components/Book";
 
 // STATEFUL
 class TradePage extends Component {
@@ -15,7 +16,7 @@ class TradePage extends Component {
         return (
             <>
                 <CssBaseline/>
-                Trade
+                <Book/>
             </>
         );
     }

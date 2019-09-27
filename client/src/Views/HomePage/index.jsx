@@ -26,7 +26,7 @@ const HomePage = ({auth, classes}) => {
       <>
         <CssBaseline/>
         <Navbar/>
-        <Container maxWidth={'lg'} className={classes.container}>
+        <Container maxWidth={'xl'} className={classes.container}>
           <Switch>
             { homeRoutes.map((prop, key) => {return <Route path={prop.path} key={key} component={prop.component}/>}) }
           </Switch>

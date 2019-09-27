@@ -14,8 +14,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 
 const styles = theme => ({
     paper: {
-        width: '100%',
-        maxWidth: 300,
+        minWidth: 300,
     },
     priceHeader: {
         margin: '0px 15px 0px 20px'

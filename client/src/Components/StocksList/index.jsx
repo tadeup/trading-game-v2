@@ -44,6 +44,12 @@ export const styles = theme => ({
     },
     timestamp: {
         color: 'rgb(153, 153, 153)'
+    },
+    lastPricesUp: {
+        color: 'rgb(234, 0, 112)',
+    },
+    lastPricesDown: {
+        color: 'rgb(112, 168, 0)',
     }
 });
 
@@ -89,17 +95,17 @@ class StocksList extends Component {
                                         </TableHead>
                                         <TableBody className={classes.tableActivity}>
                                             <TableRow>
-                                                <TableCell component="th" scope="row">10</TableCell>
+                                                <TableCell component="th" scope="row" className={classes.lastPricesUp}>10</TableCell>
                                                 <TableCell align="left">20</TableCell>
                                                 <TableCell align="right" className={classes.timestamp}>09:49:06</TableCell>
                                             </TableRow>
                                             <TableRow>
-                                                <TableCell component="th" scope="row">10</TableCell>
+                                                <TableCell component="th" scope="row" className={classes.lastPricesUp}>10</TableCell>
                                                 <TableCell align="left">20</TableCell>
                                                 <TableCell align="right" className={classes.timestamp}>09:49:06</TableCell>
                                             </TableRow>
                                             <TableRow>
-                                                <TableCell component="th" scope="row">10</TableCell>
+                                                <TableCell component="th" scope="row" className={classes.lastPricesDown}>10</TableCell>
                                                 <TableCell align="left">20</TableCell>
                                                 <TableCell align="right" className={classes.timestamp}>09:49:06</TableCell>
                                             </TableRow>

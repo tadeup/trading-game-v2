@@ -11,19 +11,26 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
+import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
     paper: {
         minWidth: 300,
     },
     priceHeader: {
-        margin: '0px 15px 0px 20px'
+        color: 'rgb(153, 153, 153)',
+        textAlign: 'center'
     },
     quantityHeader: {
-        margin: '0px 15px 0px 25px'
+        color: 'rgb(153, 153, 153)',
+        textAlign: 'center'
     },
     totalHeader: {
-        margin: '0px 15px 0px 30px'
+        color: 'rgb(153, 153, 153)',
+        textAlign: 'center'
+    },
+    gridHeader: {
+
     },
     priceBuy: {
         width: '30%',
@@ -31,16 +38,13 @@ const styles = theme => ({
         color: 'rgb(112, 168, 0)'
     },
     priceSell: {
-        width: '30%',
         textAlign: 'center',
         color: 'rgb(234, 0, 112)'
     },
     quantity: {
-        width: '40%',
         textAlign: 'center'
     },
     total: {
-        width: '30%',
         textAlign: 'center'
     },
 });
@@ -53,18 +57,44 @@ class Book extends Component {
         return (
             <Paper className={classes.paper}>
                 <CssBaseline/>
-                <List subheader={
-                    <ListSubheader>
-                        <span className={classes.priceHeader}>preço</span>
-                        <span className={classes.quantityHeader}>quantidade</span>
-                        <span className={classes.totalHeader}>total</span>
-                    </ListSubheader>
-                } component="nav" aria-label="main mailbox folders">
+                <List component="nav" aria-label="main mailbox folders">
+                    <ListItem dense>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="space-between"
+                            alignItems="stretch"
+                            className={classes.gridHeader}
+                        >
+                            <Grid item xs={4} className={classes.priceHeader}>
+                                Preço
+                            </Grid>
+                            <Grid item xs={4} className={classes.quantityHeader}>
+                                Quantidade
+                            </Grid>
+                            <Grid item xs={4} className={classes.totalHeader}>
+                                Total
+                            </Grid>
+                        </Grid>
+                    </ListItem>
                     {[20,19,18,17,16,15,14,13,12,11].map(price => (
                         <ListItem button dense>
-                            <span className={classes.priceSell}>{price}</span>
-                            <span className={classes.quantity}>10</span>
-                            <span className={classes.total}>200</span>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="space-between"
+                                alignItems="stretch"
+                            >
+                                <Grid item xs={4} className={classes.priceSell}>
+                                    {price}
+                                </Grid>
+                                <Grid item xs={4} className={classes.quantity}>
+                                    10
+                                </Grid>
+                                <Grid item xs={4} className={classes.total}>
+                                    {price * 10}
+                                </Grid>
+                            </Grid>
                         </ListItem>
                     ))}
                 </List>

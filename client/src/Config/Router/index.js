@@ -1,5 +1,6 @@
 import HomePage from '../../Views/HomePage';
 import LoginPage from '../../Views/LoginPage';
+import AdminPage from '../../Views/AdminPage';
 // import NotFoundPage from '../views/NotFoundPage'
 
 const indexRoutes = [
@@ -8,6 +9,7 @@ const indexRoutes = [
 
   //main routes
   { path: "/login", name: "LoginPage", component: LoginPage },
+  { path: "/admin", name: "AdminPage", component: AdminPage },
 
   // home path must come last
   { path: "/", name: "HomePage", component: HomePage },

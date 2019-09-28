@@ -14,6 +14,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
+import Skeleton from '@material-ui/lab/Skeleton';
 
 export const styles = theme => ({
     gridList: {
@@ -59,13 +60,13 @@ class StocksList extends Component {
     state = {  };
 
     render() {
-        const { classes } = this.props;
+        const { classes, assets } = this.props;
         return (
             <>
                 <CssBaseline/>
                 <GridList cellHeight={140} className={classes.gridList} cols={1}>
-                    {[1,2,3,4 ,5].map(el=>(
-                        <ButtonBase focusRipple className={classes.buttonElement}>
+                    {assets ? assets.map(asset=>(
+                        <ButtonBase focusRipple className={classes.buttonElement} key={asset}>
                             <Grid
                                 container
                                 direction="row"
@@ -76,7 +77,7 @@ class StocksList extends Component {
                             >
                                 <Grid item xs={3} className={classes.itemFirst}>
                                     <Typography variant="h4">
-                                        Ativo 1
+                                        {asset.assetName}
                                     </Typography>
                                     <Typography variant="h6" color="textSecondary">
                                         Posição: 666
@@ -139,30 +140,16 @@ class StocksList extends Component {
                                 </Grid>
                             </Grid>
                         </ButtonBase>
-                    ))}
+                    )) : [1,2,3].map(el=><Skeleton height={140}/>)}
                 </GridList>
             </>
         );
     }
 }
 
-StocksList.propTypes = {
-    // Optional props
-
-    // Required Functions
-    dispatch: PropTypes.func.isRequired,
-    // Required Objects
-    classes: PropTypes.object.isRequired,
-    firebase: PropTypes.object.isRequired,
-    firestore: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
-    match: PropTypes.object.isRequired,
-};
-
 const mapStateToProps = state => {
     return {
-
+        assets: state.firestore.data.assets ? Object.values(state.firestore.data.assets) : undefined
     }
 };
 
@@ -175,5 +162,11 @@ const mapDispatchToProps = dispatch => {
 export default compose(
     withStyles(styles),
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect(),
+    firestoreConnect((props) => {
+        return [
+            {
+                collection: 'assets',
+            }
+        ]
+    }),
 )(StocksList)

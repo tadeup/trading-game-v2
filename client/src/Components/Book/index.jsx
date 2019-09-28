@@ -80,7 +80,7 @@ class Book extends Component {
                         </Grid>
                     </ListItem>
                     {[20,19,18,17,16,15,14,13,12,11].map(price => (
-                        <ListItem button dense>
+                        <ListItem button dense key={price}>
                             <Grid
                                 container
                                 direction="row"
@@ -110,7 +110,7 @@ class Book extends Component {
                     </ListItem>
 
                     {[10,9,8,7,6,5,4,3,2,1].map(price => (
-                        <ListItem button dense>
+                        <ListItem button dense key={price}>
                             <Grid
                                 container
                                 direction="row"
@@ -134,21 +134,6 @@ class Book extends Component {
         );
     }
 }
-
-Book.propTypes = {
-    // Optional props
-    clearFirestore: PropTypes.func.isRequired,
-
-    // Required Functions
-    dispatch: PropTypes.func.isRequired,
-    // Required Objects
-    classes: PropTypes.object.isRequired,
-    firebase: PropTypes.object.isRequired,
-    firestore: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
-    match: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = state => {
     return {

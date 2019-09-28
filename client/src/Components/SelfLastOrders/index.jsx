@@ -79,20 +79,6 @@ class SelfLastOrders extends Component {
     }
 }
 
-SelfLastOrders.propTypes = {
-    // Optional props
-
-    // Required Functions
-    dispatch: PropTypes.func.isRequired,
-    // Required Objects
-    classes: PropTypes.object.isRequired,
-    firebase: PropTypes.object.isRequired,
-    firestore: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
-    match: PropTypes.object.isRequired,
-};
-
 const mapStateToProps = state => {
     return {
 

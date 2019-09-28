@@ -17,7 +17,8 @@ import TableBody from "@material-ui/core/TableBody";
 
 export const styles = theme => ({
     gridList: {
-        maxHeight: 630
+        maxHeight: 646,
+        borderBottom: '1px solid rgba(224, 224, 224, 1)'
     },
     itemFirst: {
         textAlign: 'start',

@@ -16,6 +16,7 @@ import {Link} from "react-router-dom";
 
 const HomeLink = props => <Link to={"/"} {...props}/>;
 const AssetsLink = props => <Link to={"/admin"} {...props}/>;
+const UsersLink = props => <Link to={"/admin/users"} {...props}/>;
 
 const styles = theme => ({
     menuButton: {
@@ -84,6 +85,7 @@ class Navbar extends Component {
                             <MenuItem onClick={this.handleClose}>Profile</MenuItem>
                             <MenuItem component={HomeLink}>Trade</MenuItem>
                             <MenuItem component={AssetsLink}>Ativos</MenuItem>
+                            <MenuItem component={UsersLink}>Usuarios</MenuItem>
                             <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
                         </Menu>
                     </div>

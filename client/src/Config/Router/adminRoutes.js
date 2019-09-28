@@ -1,10 +1,11 @@
 import AdminAssetsPage from '../../Views/AdminAssetsPage'
+import AdminUsersPage from '../../Views/AdminUsersPage'
 
-const homeRoutes = [
-    // { path: '/settings', name: 'SettingsPage', component: SettingsPage},
+const adminRoutes = [
+    { path: '/users', name: 'AdminUsersPage', component: AdminUsersPage},
 
     // home path must come last
     { path: "/",name: 'AdminAssetsPage', component: AdminAssetsPage },
 ];
 
-export default homeRoutes;
+export default adminRoutes;

@@ -149,7 +149,7 @@ class StocksList extends Component {
 
 const mapStateToProps = state => {
     return {
-        assets: state.firestore.data.assets ? Object.values(state.firestore.data.assets) : undefined
+        assets: state.firestore.ordered.assets
     }
 };
 

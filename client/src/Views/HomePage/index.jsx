@@ -13,7 +13,7 @@ import homeRoutes from "../../Config/Router/homeRoutes";
 import Navbar from "../../Components/Navbar";
 
 // STATELESS
-const HomePage = ({auth, classes}) => {
+const HomePage = ({auth, classes, match}) => {
   if (!isLoaded(auth)) {
     return <Loader/>
   }
@@ -28,7 +28,7 @@ const HomePage = ({auth, classes}) => {
         <Navbar/>
         <Container maxWidth={'xl'} className={classes.container}>
           <Switch>
-            { homeRoutes.map((prop, key) => {return <Route path={prop.path} key={key} component={prop.component}/>}) }
+            { homeRoutes.map((prop, key) => {return <Route exact path={`${match.path}${prop.path}`} key={key} component={prop.component}/>}) }
           </Switch>
         </Container>
       </>
@@ -51,7 +51,7 @@ HomePage.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = state => {console.log(state)
   return {
     auth: state.firebase.auth
   }

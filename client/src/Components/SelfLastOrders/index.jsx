@@ -15,7 +15,7 @@ import Button from "@material-ui/core/Button";
 
 export const styles = theme => ({
     main: {
-        minWidth: 350,
+        width: 350,
         height: 280,
         overflow: 'auto',
     },
@@ -50,7 +50,8 @@ class SelfLastOrders extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell align="left">Preço</TableCell>
-                            <TableCell align="left">Quantidade</TableCell>
+                            <TableCell align="left">Qtd.</TableCell>
+                            <TableCell align="left">Tipo</TableCell>
                             <TableCell align="right">
                                 <Button className={classes.cancelAllButton} color="secondary">
                                     Cancelar Todos
@@ -59,16 +60,11 @@ class SelfLastOrders extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody className={classes.tableBody}>
-                        {/*<TableRow key={0}>*/}
-                        {/*    <TableCell align="left">{0}</TableCell>*/}
-                        {/*    <TableCell align="left">{0}</TableCell>*/}
-                        {/*    <TableCell align="center">{0}</TableCell>*/}
-                        {/*</TableRow>*/}
                         {[1,2,3,4,5,6,7,8,9,10].map(row => (
                             <TableRow key={row}>
                                 <TableCell align="left">{row}</TableCell>
                                 <TableCell align="left">{row}</TableCell>
-
+                                <TableCell align="left">{row%2 ? "compra" : "venda"}</TableCell>
                                 <TableCell align="right">
                                     <Button className={classes.cancelButton} variant={'outlined'}>
                                         Cancelar

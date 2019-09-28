@@ -12,6 +12,10 @@ import {connect} from "react-redux";
 import {firestoreConnect} from "react-redux-firebase";
 import {compose} from "redux";
 import {actionTypes} from "redux-firestore";
+import {Link} from "react-router-dom";
+
+const HomeLink = props => <Link to={"/"} {...props}/>;
+const AssetsLink = props => <Link to={"/admin"} {...props}/>;
 
 const styles = theme => ({
     menuButton: {
@@ -78,6 +82,8 @@ class Navbar extends Component {
                             onClose={this.handleClose}
                         >
                             <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                            <MenuItem component={HomeLink}>Trade</MenuItem>
+                            <MenuItem component={AssetsLink}>Ativos</MenuItem>
                             <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
                         </Menu>
                     </div>

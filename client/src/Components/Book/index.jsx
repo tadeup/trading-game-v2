@@ -5,7 +5,7 @@ import { compose } from 'redux'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, withStyles} from "@material-ui/core";
+import {Paper, Typography, withStyles} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -33,7 +33,6 @@ const styles = theme => ({
 
     },
     priceBuy: {
-        width: '30%',
         textAlign: 'center',
         color: 'rgb(112, 168, 0)'
     },
@@ -47,6 +46,9 @@ const styles = theme => ({
     total: {
         textAlign: 'center'
     },
+    priceCentral: {
+        backgroundColor: 'rgb(247, 247, 247)',
+    }
 });
 
 class Book extends Component {
@@ -97,16 +99,34 @@ class Book extends Component {
                             </Grid>
                         </ListItem>
                     ))}
-                </List>
 
-                <Divider/>
+                    <ListItem className={classes.priceCentral} dense>
+                        <Grid container>
+                            <Grid item xs={1}/>
+                            <Typography variant="h6">
+                                10.5
+                            </Typography>
+                        </Grid>
+                    </ListItem>
 
-                <List component="nav" aria-label="main mailbox folders">
                     {[10,9,8,7,6,5,4,3,2,1].map(price => (
                         <ListItem button dense>
-                            <span className={classes.priceBuy}>{price}</span>
-                            <span className={classes.quantity}>10</span>
-                            <span className={classes.total}>200</span>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="space-between"
+                                alignItems="stretch"
+                            >
+                                <Grid item xs={4} className={classes.priceBuy}>
+                                    {price}
+                                </Grid>
+                                <Grid item xs={4} className={classes.quantity}>
+                                    10
+                                </Grid>
+                                <Grid item xs={4} className={classes.total}>
+                                    {price * 10}
+                                </Grid>
+                            </Grid>
                         </ListItem>
                     ))}
                 </List>

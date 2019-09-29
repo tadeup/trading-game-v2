@@ -6,6 +6,7 @@ import firebase from "firebase/app";
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
+import 'firebase/functions'
 // Local imports
 import {store} from "../Redux/configureStore";
 
@@ -23,6 +24,10 @@ const firebaseConfig = {
 
 // Initialize app with config
 firebase.initializeApp(firebaseConfig);
+
+// Initialize other services on firebase instance
+firebase.firestore();
+firebase.functions();
 
 // Config the firebase enhancer for the redux store
 const rrfConfig = {

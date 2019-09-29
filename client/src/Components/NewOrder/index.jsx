@@ -42,6 +42,23 @@ class NewOrder extends Component {
         this.setState({ [name]: newValue });
     };
 
+    handleSubmit = () => {
+        this.setState({ isSending: true }, () => {
+            this.props.firestore.add(
+                { collection: 'offers'},
+                {
+                    offerAsset: 'teste',
+                    offerQuantity: this.state.quantity,
+                    offerFilled: 0,
+                    offerPrice: this.state.price,
+                    offerIsBuy: this.state.isBuy,
+                }
+            ).then(()=>{
+                this.setState({ isSending: false })
+            })
+        });
+    };
+
     render() {
         const { classes } = this.props;
         const { quantity, price, isBuy } = this.state;
@@ -116,7 +133,7 @@ class NewOrder extends Component {
                         </Typography>
                     </Grid>
 
-                    <Button variant="contained" color="primary" className={classes.button} fullWidth={true} onClick={this.handleLogin}>
+                    <Button variant="contained" color="primary" className={classes.button} fullWidth={true} onClick={this.handleSubmit}>
                         CONFIRMAR ORDEM
                     </Button>
 

@@ -51,7 +51,7 @@ HomePage.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {console.log(state)
+const mapStateToProps = state => {
   return {
     auth: state.firebase.auth
   }

@@ -32,6 +32,7 @@ class NewOrder extends Component {
         quantity: '',
         price: '',
         isBuy: 0,
+        isSending: false
     };
 
     handleChange = name => event => {
@@ -43,25 +44,27 @@ class NewOrder extends Component {
     };
 
     handleSubmit = () => {
-        this.setState({ isSending: true }, () => {
-            this.props.firestore.add(
-                { collection: 'offers'},
-                {
-                    offerAsset: 'teste',
-                    offerQuantity: this.state.quantity,
-                    offerFilled: 0,
-                    offerPrice: this.state.price,
-                    offerIsBuy: this.state.isBuy,
-                }
-            ).then(()=>{
-                this.setState({ isSending: false })
-            })
-        });
+        // this.setState({ isSending: true }, () => {
+        //     this.props.firestore.add(
+        //         { collection: 'offers'},
+        //         {
+        //             offerAsset: 'teste',
+        //             offerQuantity: this.state.quantity,
+        //             offerFilled: 0,
+        //             offerPrice: this.state.price,
+        //             offerIsBuy: !Boolean(this.state.isBuy),
+        //         }
+        //     ).then(()=>{
+        //         this.setState({ isSending: false })
+        //     })
+        // });
+        const getOffer = this.props.firebase.functions().httpsCallable('getOffer');
+        getOffer({firstNumber: 1, secondNumber: 6}).then((res)=>{console.log(res)})
     };
 
     render() {
         const { classes } = this.props;
-        const { quantity, price, isBuy } = this.state;
+        const { quantity, price, isBuy, isSending } = this.state;
         return (
             <Paper className={classes.paper}>
                 <CssBaseline/>
@@ -133,7 +136,7 @@ class NewOrder extends Component {
                         </Typography>
                     </Grid>
 
-                    <Button variant="contained" color="primary" className={classes.button} fullWidth={true} onClick={this.handleSubmit}>
+                    <Button variant="contained" color="primary" className={classes.button} fullWidth={true} onClick={this.handleSubmit} disabled={isSending}>
                         CONFIRMAR ORDEM
                     </Button>
 

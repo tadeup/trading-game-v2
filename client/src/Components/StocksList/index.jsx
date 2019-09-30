@@ -15,6 +15,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Skeleton from '@material-ui/lab/Skeleton';
+import { selectAsset } from "./redux/actions";
 
 export const styles = theme => ({
     gridList: {
@@ -59,6 +60,10 @@ export const styles = theme => ({
 class StocksList extends Component {
     state = {  };
 
+    handleClick = asset => event => {
+        this.props.selectAsset(asset)
+    };
+
     render() {
         const { classes, assets } = this.props;
         return (
@@ -66,7 +71,7 @@ class StocksList extends Component {
                 <CssBaseline/>
                 <GridList cellHeight={140} className={classes.gridList} cols={1}>
                     {assets ? assets.map(asset=>(
-                        <ButtonBase focusRipple className={classes.buttonElement} key={asset}>
+                        <ButtonBase focusRipple className={classes.buttonElement} key={asset} onClick={this.handleClick(asset)}>
                             <Grid
                                 container
                                 direction="row"
@@ -140,7 +145,7 @@ class StocksList extends Component {
                                 </Grid>
                             </Grid>
                         </ButtonBase>
-                    )) : [1,2,3].map(el=><Skeleton height={140}/>)}
+                    )) : [1,2,3].map(el=><Skeleton height={140} key={el}/>)}
                 </GridList>
             </>
         );
@@ -155,7 +160,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        selectAsset: payload => dispatch(selectAsset(payload)),
     }
 };
 

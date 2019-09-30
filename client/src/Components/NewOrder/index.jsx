@@ -39,6 +39,31 @@ class NewOrder extends Component {
         this.setState({ [name]: event.target.value });
     };
 
+    handleChangeInt = name => event => {
+        const el = parseInt(event.target.value) > 0 ? parseInt(event.target.value) : '';
+        if (event.target.value) {
+            this.setState({ [name]: el });
+        } else {
+            this.setState({ [name]: '' });
+        }
+    };
+
+    handleChangeFloat = name => event => {
+        const x = Number(event.target.value);
+        if (x <= 0) {
+            this.setState({ [name]:  ''});
+        }
+        else {
+            this.setState({ [name]:  x});
+        }
+
+        // if (event.target.value) {
+        //     this.setState({ [name]: parseFloat(event.target.value) });
+        // } else {
+        //     this.setState({ [name]: '' });
+        // }
+    };
+
     handleTab = name => (event, newValue) => {
         this.setState({ [name]: newValue });
     };
@@ -48,22 +73,35 @@ class NewOrder extends Component {
         //     this.props.firestore.add(
         //         { collection: 'offers'},
         //         {
-        //             offerAsset: 'teste',
+        //             offerOwnerId: this.props.auth.uid,
+        //             offerAsset: this.props.selectedAsset.assetName,
         //             offerQuantity: this.state.quantity,
         //             offerFilled: 0,
         //             offerPrice: this.state.price,
         //             offerIsBuy: !Boolean(this.state.isBuy),
+        //             offerIsCanceled: false,
+        //             offerIsFilled: false,
         //         }
         //     ).then(()=>{
         //         this.setState({ isSending: false })
         //     })
         // });
-        const getOffer = this.props.firebase.functions().httpsCallable('getOffer');
-        getOffer({firstNumber: 1, secondNumber: 6}).then((res)=>{console.log(res)})
+
+        const newOffer = this.props.firebase.functions().httpsCallable('newOffer');
+        newOffer({
+            offerOwnerId: this.props.auth.uid,
+            offerAsset: this.props.selectedAsset.assetName,
+            offerQuantity: this.state.quantity,
+            offerFilled: this.state.quantity,
+            offerPrice: this.state.price,
+            offerIsBuy: !Boolean(this.state.isBuy),
+            offerIsCanceled: false,
+            offerIsFilled: this.state.quantity,
+        }).then((res)=>{console.log(res)})
     };
 
     render() {
-        const { classes } = this.props;
+        const { classes, selectedAsset } = this.props;
         const { quantity, price, isBuy, isSending } = this.state;
         return (
             <Paper className={classes.paper}>
@@ -75,7 +113,7 @@ class NewOrder extends Component {
                     alignItems="center"
                 >
                     <Typography variant="h5" gutterBottom>
-                        Ordem
+                        {selectedAsset ? selectedAsset.assetName : 'Selecione um Ativo'}
                     </Typography>
 
                     <Tabs value={isBuy} onChange={this.handleTab('isBuy')} aria-label="comprar ou vender" className={classes.tabs}>
@@ -90,24 +128,26 @@ class NewOrder extends Component {
                         variant="outlined"
                         label="Preço"
                         value={price}
-                        onChange={this.handleChange('price')}
+                        onChange={this.handleChangeFloat('price')}
                         InputProps={{
                             endAdornment: <InputAdornment position="end">$</InputAdornment>,
                         }}
                         margin={'dense'}
                         fullWidth={true}
+                        type="number"
+                        inputProps={{
+                            step: 0.01,
+                        }}
                     />
                     <TextField
                         className={classes.textInput}
                         variant="outlined"
                         label="Quantidade"
                         value={quantity}
-                        onChange={this.handleChange('quantity')}
-                        InputProps={{
-                            endAdornment: <InputAdornment position="end">$</InputAdornment>,
-                        }}
+                        onChange={this.handleChangeInt('quantity')}
                         margin={'dense'}
                         fullWidth={true}
+                        type="number"
                     />
                     <Grid
                         container
@@ -150,7 +190,9 @@ class NewOrder extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        selectedAsset: state.stockList.selectedAsset ? state.stockList.selectedAsset : null,
+        auth: state.firebase.auth,
+        profile: state.firebase.profile
     }
 };
 

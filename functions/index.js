@@ -80,5 +80,24 @@ exports.getOffer = functions.https.onCall((data, context) => {
             console.log('Error getting documents', err);
             return 500
         });
+});
 
+exports.newOffer = functions.https.onCall((data, context) => {
+    let db = admin.firestore();
+    const { offerAsset, offerQuantity, offerFilled, offerPrice, offerIsBuy, offerIsCanceled } = data;
+
+    return db.collection('offers')
+        .where('offerAsset', '==', offerAsset )
+        .where('offerIsCanceled', '==', false)
+        .where('offerIsBuy', '==', !offerIsBuy)
+        .where('offerIsFilled', '==', false)
+        .where('offerPrice', offerIsBuy ? '<' : '>', offerPrice)
+        .get()
+        .then((snapshot) => {
+            return snapshot.docs.map(doc=>doc.data())
+        })
+        .catch((err) => {
+            console.log('Error getting documents', err);
+            return 500
+        });
 });

@@ -84,20 +84,75 @@ exports.getOffer = functions.https.onCall((data, context) => {
 
 exports.newOffer = functions.https.onCall((data, context) => {
     let db = admin.firestore();
-    const { offerAsset, offerQuantity, offerFilled, offerPrice, offerIsBuy, offerIsCanceled } = data;
+    const { offerOwnerId, offerAsset, offerQuantity, offerFilled, offerPrice, offerIsBuy, offerIsCanceled, offerIsFilled } = data;
 
     return db.collection('offers')
         .where('offerAsset', '==', offerAsset )
         .where('offerIsCanceled', '==', false)
         .where('offerIsBuy', '==', !offerIsBuy)
         .where('offerIsFilled', '==', false)
-        .where('offerPrice', offerIsBuy ? '<' : '>', offerPrice)
+        .where('offerPrice', offerIsBuy ? '<=' : '>=', offerPrice)
+        .orderBy('offerPrice', offerIsBuy ? 'asc' : 'desc')
         .get()
         .then((snapshot) => {
-            return snapshot.docs.map(doc=>doc.data())
+            const newOffer = [{ offerOwnerId, offerAsset, offerQuantity, offerFilled, offerPrice, offerIsBuy, offerIsCanceled, offerIsFilled }];
+            snapshot.forEach(doc=>{
+                newOffer[0].offerFilled += doc.data().offerQuantity;
+                newOffer.push(doc.data())
+            });
+            return newOffer
+            // return snapshot.docs.map(doc=>doc.data())
         })
         .catch((err) => {
             console.log('Error getting documents', err);
             return 500
         });
+});
+
+exports.onNewOffer = functions.firestore.document('offers/{offerId}').onCreate((snap, context) => {
+    let db = admin.firestore();
+    const newValue = snap.data();
+    const offers = db.collection('offers')
+        .where('offerAsset', '==', newValue.offerAsset )
+        .where('offerIsCanceled', '==', false)
+        .where('offerIsBuy', '==', !newValue.offerIsBuy)
+        .where('offerIsFilled', '==', false)
+        .where('offerPrice', newValue.offerIsBuy ? '<=' : '>=', newValue.offerPrice)
+        .orderBy('offerPrice', newValue.offerIsBuy ? 'asc' : 'desc');
+
+    return db.runTransaction(t => {
+        return t.get(offers)
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    if (newValue.offerIsFilled) {
+                        const newOther = doc.data();
+
+                        const leftOther = newOther.offerQuantity - newOther.offerFilled;
+                        const leftSelf = newValue.offerQuantity - newValue.offerFilled;
+                        if (leftSelf > leftOther) {
+                            newValue.offerFilled += leftOther;
+                            newOther.offerFilled += leftOther;
+                            newOther.offerIsFilled = true;
+                        } else if (leftSelf === leftOther) {
+                            newValue.offerFilled += leftSelf;
+                            newValue.offerIsFilled = true;
+                            newOther.offerFilled += leftOther;
+                            newOther.offerIsFilled = true;
+                        } else {
+                            newValue.offerFilled += leftSelf;
+                            newValue.offerIsFilled = true;
+                            newOther.offerFilled += leftSelf;
+                        }
+                        t.update(doc.ref, newOther)
+                    }
+                });
+                t.update(snap.ref, newValue)
+            })
+    }).then(result => {
+        console.log('Transaction success!');
+        console.log(result)
+    }).catch(err => {
+        console.log('Transaction failure:');
+        console.log(err)
+    });
 });

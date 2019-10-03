@@ -24,3 +24,6 @@
 
 /functions/node_modules/
 /functions/trading-game-v2-firebase-adminsdk-v2057-c3dbace971.json
+
+/server/node_modules/
+/server/ServiceAccout.json

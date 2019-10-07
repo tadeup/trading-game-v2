@@ -69,35 +69,32 @@ class NewOrder extends Component {
     };
 
     handleSubmit = () => {
-        this.setState({ isSending: true }, () => {
-            this.props.firestore.add(
-                { collection: 'offers'},
-                {
-                    offerOwnerId: this.props.auth.uid,
-                    offerAsset: this.props.selectedAsset.assetName,
-                    offerQuantity: this.state.quantity,
-                    offerFilled: 0,
-                    offerPrice: this.state.price,
-                    offerIsBuy: !Boolean(this.state.isBuy),
-                    offerIsCanceled: false,
-                    offerIsFilled: false,
-                }
-            ).then(()=>{
-                this.setState({ isSending: false })
-            })
-        });
+        // this.setState({ isSending: true }, () => {
+        //     this.props.firestore.add(
+        //         { collection: 'offers'},
+        //         {
+        //             offerOwnerId: this.props.auth.uid,
+        //             offerAsset: this.props.selectedAsset.assetName,
+        //             offerQuantity: this.state.quantity,
+        //             offerFilled: 0,
+        //             offerPrice: this.state.price,
+        //             offerIsBuy: !Boolean(this.state.isBuy),
+        //             offerIsCanceled: false,
+        //             offerIsFilled: false,
+        //         }
+        //     ).then(()=>{
+        //         this.setState({ isSending: false })
+        //     })
+        // });
 
-        // const newOffer = this.props.firebase.functions().httpsCallable('newOffer');
-        // newOffer({
-        //     offerOwnerId: this.props.auth.uid,
-        //     offerAsset: this.props.selectedAsset.assetName,
-        //     offerQuantity: this.state.quantity,
-        //     offerFilled: 0,
-        //     offerPrice: this.state.price,
-        //     offerIsBuy: !Boolean(this.state.isBuy),
-        //     offerIsCanceled: false,
-        //     offerIsFilled: false,
-        // }).then((res)=>{console.log(res)})
+        const newOffer = this.props.firebase.functions().httpsCallable('newOffer');
+        newOffer({
+            offerAsset: this.props.selectedAsset.assetName,
+            offerIsBuy: !Boolean(this.state.isBuy),
+            offerOwnerId: this.props.auth.uid,
+            offerPrice: this.state.price,
+            offerQuantity: this.state.quantity,
+        }).then((res)=>{console.log(res)})
     };
 
     render() {

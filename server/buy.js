@@ -14,13 +14,14 @@ const docRef = db
 const buyPrice = 15;
 const buyQuantity = 6;
 
-docRef.set({offerAsset: "test", offerFilled: buyQuantity, offerIsBuy: true, offerIsCanceled: false, offerIsFilled: false, offerOwnerId: "vdYkId5PLFTdAJE4Ej9OEgqDBuf2", offerPrice: buyPrice, offerQuantity: buyQuantity,})
+docRef.set({offerAsset: "test", offerFilled: buyQuantity, offerIsBuy: true, offerIsCanceled: false, offerIsFilled: false, offerIsReady: false, offerOwnerId: "vdYkId5PLFTdAJE4Ej9OEgqDBuf2", offerPrice: buyPrice, offerQuantity: buyQuantity,})
     .then(()=>{
         return db.collection('test')
             .where('offerAsset', '==', 'test' )
             .where('offerIsCanceled', '==', false)
             .where('offerIsBuy', '==', false)
             .where('offerIsFilled', '==', false)
+            .where('offerIsReady', '==', true)
             .where('offerPrice', '<=', buyPrice)
             .orderBy('offerPrice', 'asc')
             .get()
@@ -56,7 +57,7 @@ docRef.set({offerAsset: "test", offerFilled: buyQuantity, offerIsBuy: true, offe
                             }
                         }
                     });
-                    t.update(docRef, {offerFilled: newFilledSelf, offerIsFilled: newIsFilledSelf});
+                    t.update(docRef, {offerFilled: newFilledSelf, offerIsFilled: newIsFilledSelf, offerIsReady: true});
                 });
         })
     })

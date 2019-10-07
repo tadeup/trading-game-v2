@@ -5,7 +5,7 @@ import { compose } from 'redux'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, Typography, withStyles} from "@material-ui/core";
+import {Paper, Snackbar, Typography, withStyles} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Grid from "@material-ui/core/Grid";
@@ -13,6 +13,7 @@ import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import MySnackbarContentWrapper from "../CustomizedSnackbars";
 
 export const styles = theme => ({
     textInput: {
@@ -32,7 +33,10 @@ class NewOrder extends Component {
         quantity: '',
         price: '',
         isBuy: 0,
-        isSending: false
+        isSending: false,
+        snackbarOpen: false,
+        snackbarVariant: 'info',
+        snackbarMessage: ''
     };
 
     handleChange = name => event => {
@@ -69,37 +73,44 @@ class NewOrder extends Component {
     };
 
     handleSubmit = () => {
-        // this.setState({ isSending: true }, () => {
-        //     this.props.firestore.add(
-        //         { collection: 'offers'},
-        //         {
-        //             offerOwnerId: this.props.auth.uid,
-        //             offerAsset: this.props.selectedAsset.assetName,
-        //             offerQuantity: this.state.quantity,
-        //             offerFilled: 0,
-        //             offerPrice: this.state.price,
-        //             offerIsBuy: !Boolean(this.state.isBuy),
-        //             offerIsCanceled: false,
-        //             offerIsFilled: false,
-        //         }
-        //     ).then(()=>{
-        //         this.setState({ isSending: false })
-        //     })
-        // });
+        if (this.props.selectedAsset && this.props.selectedAsset.assetName && this.state.quantity && this.state.price) {
+            this.setState({ isSending: true }, () => {
+                const newOffer = this.props.firebase.functions().httpsCallable('newOffer');
+                newOffer({
+                    offerAsset: this.props.selectedAsset.assetName,
+                    offerIsBuy: !Boolean(this.state.isBuy),
+                    offerOwnerId: this.props.auth.uid,
+                    offerPrice: this.state.price,
+                    offerQuantity: this.state.quantity,
+                }).then((res)=>{
+                    console.log(res);
+                    if (res.data && res.data.success) {
+                        this.setState({ quantity: '', price: '', isSending: false, snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Oferta Enviada com Sucesso!' })
+                    } else {
+                        this.setState({ quantity: '', price: '', isSending: false, snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
+                    }
 
-        const newOffer = this.props.firebase.functions().httpsCallable('newOffer');
-        newOffer({
-            offerAsset: this.props.selectedAsset.assetName,
-            offerIsBuy: !Boolean(this.state.isBuy),
-            offerOwnerId: this.props.auth.uid,
-            offerPrice: this.state.price,
-            offerQuantity: this.state.quantity,
-        }).then((res)=>{console.log(res)})
+                })
+            });
+        } else if (!this.state.quantity || !this.state.price) {
+            this.setState({ snackbarOpen: true, snackbarVariant: 'warning', snackbarMessage: 'Preço ou Quantidade inválido(a)' })
+        } else {
+            this.setState({ snackbarOpen: true, snackbarVariant: 'warning', snackbarMessage: 'Nenhum Ativo Selecionado!' })
+        }
+
+    };
+
+    handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({snackbarOpen: false});
     };
 
     render() {
         const { classes, selectedAsset } = this.props;
-        const { quantity, price, isBuy, isSending } = this.state;
+        const { quantity, price, isBuy, isSending, snackbarOpen, snackbarVariant, snackbarMessage } = this.state;
         return (
             <Paper className={classes.paper}>
                 <CssBaseline/>
@@ -179,6 +190,22 @@ class NewOrder extends Component {
 
 
                 </Grid>
+
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    autoHideDuration={4000}
+                    onClose={this.handleClose}
+                    open={snackbarOpen}
+                >
+                    <MySnackbarContentWrapper
+                        onClose={this.handleClose}
+                        variant={snackbarVariant}
+                        message={snackbarMessage}
+                    />
+                </Snackbar>
 
             </Paper>
         );

@@ -11,19 +11,21 @@ const docRef = db
     .collection('test')
     .doc('buyOffer');
 
-const buyPrice = 15;
-const buyQuantity = 6;
+const offerPrice = 15;
+const offerQuantity = 6;
+const offerIsBuy = true;
+const offerAsset = "test";
 
-docRef.set({offerAsset: "test", offerFilled: buyQuantity, offerIsBuy: true, offerIsCanceled: false, offerIsFilled: false, offerIsReady: false, offerOwnerId: "vdYkId5PLFTdAJE4Ej9OEgqDBuf2", offerPrice: buyPrice, offerQuantity: buyQuantity,})
+docRef.set({offerAsset: offerAsset, offerFilled: offerQuantity, offerIsBuy: offerIsBuy, offerIsCanceled: false, offerIsFilled: false, offerIsReady: false, offerOwnerId: "vdYkId5PLFTdAJE4Ej9OEgqDBuf2", offerPrice: offerPrice, offerQuantity: offerQuantity,})
     .then(()=>{
         return db.collection('test')
-            .where('offerAsset', '==', 'test' )
+            .where('offerAsset', '==', offerAsset )
             .where('offerIsCanceled', '==', false)
             .where('offerIsBuy', '==', false)
             .where('offerIsFilled', '==', false)
             .where('offerIsReady', '==', true)
-            .where('offerPrice', '<=', buyPrice)
-            .orderBy('offerPrice', 'asc')
+            .where('offerPrice', offerIsBuy ? '<=' : '>=', offerPrice)
+            .orderBy('offerPrice', offerIsBuy ? 'asc' : 'desc')
             .get()
     })
     .then(refArray => {
@@ -40,16 +42,23 @@ docRef.set({offerAsset: "test", offerFilled: buyQuantity, offerIsBuy: true, offe
                     refArray.forEach(ref => {
                         if (!newIsFilledSelf) {
                             let newFilledOther = ref.data().offerFilled;
+                            const newTransactionRef = db.collection('transactions').doc();
+
                             if (newFilledSelf > newFilledOther) {
+                                t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                 newFilledSelf = newFilledSelf - newFilledOther;
                                 newFilledOther = 0;
                                 t.update(ref.ref, {offerFilled: newFilledOther, offerIsFilled: true});
+
                             } else if (newFilledSelf === newFilledOther) {
+                                t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                 newFilledOther = 0;
                                 newFilledSelf = 0;
                                 newIsFilledSelf = true;
                                 t.update(ref.ref, {offerFilled: newFilledOther, offerIsFilled: true});
+
                             } else {
+                                t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledSelf, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                 newFilledOther = newFilledOther - newFilledSelf;
                                 newFilledSelf = 0;
                                 newIsFilledSelf = true;

@@ -29,9 +29,9 @@ exports.newOffer = functions.https.onCall((data, context) => {
             offerPrice: offerPrice,
             offerQuantity: offerQuantity,
         })
-        .then(()=>{
+        .then(() => {
             return db.collection('test')
-                .where('offerAsset', '==', offerAsset )
+                .where('offerAsset', '==', offerAsset)
                 .where('offerIsCanceled', '==', false)
                 .where('offerIsBuy', '==', !offerIsBuy)
                 .where('offerIsFilled', '==', false)
@@ -54,16 +54,23 @@ exports.newOffer = functions.https.onCall((data, context) => {
                         refArray.forEach(ref => {
                             if (!newIsFilledSelf) {
                                 let newFilledOther = ref.data().offerFilled;
+                                const newTransactionRef = db.collection('transactions').doc();
+
                                 if (newFilledSelf > newFilledOther) {
+                                    t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                     newFilledSelf = newFilledSelf - newFilledOther;
                                     newFilledOther = 0;
                                     t.update(ref.ref, {offerFilled: newFilledOther, offerIsFilled: true});
+
                                 } else if (newFilledSelf === newFilledOther) {
+                                    t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                     newFilledOther = 0;
                                     newFilledSelf = 0;
                                     newIsFilledSelf = true;
                                     t.update(ref.ref, {offerFilled: newFilledOther, offerIsFilled: true});
+
                                 } else {
+                                    t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledSelf, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                     newFilledOther = newFilledOther - newFilledSelf;
                                     newFilledSelf = 0;
                                     newIsFilledSelf = true;

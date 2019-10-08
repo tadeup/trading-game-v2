@@ -45,20 +45,20 @@ docRef.set({offerAsset: offerAsset, offerFilled: offerQuantity, offerIsBuy: offe
                             const newTransactionRef = db.collection('transactions').doc();
 
                             if (newFilledSelf > newFilledOther) {
-                                t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
+                                t.set(newTransactionRef, {buyer: offerIsBuy ? doc.data().offerOwnerId : ref.data().offerOwnerId, seller: offerIsBuy ? ref.data().offerOwnerId : doc.data().offerOwnerId, asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                 newFilledSelf = newFilledSelf - newFilledOther;
                                 newFilledOther = 0;
                                 t.update(ref.ref, {offerFilled: newFilledOther, offerIsFilled: true});
 
                             } else if (newFilledSelf === newFilledOther) {
-                                t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
+                                t.set(newTransactionRef, {buyer: offerIsBuy ? doc.data().offerOwnerId : ref.data().offerOwnerId, seller: offerIsBuy ? ref.data().offerOwnerId : doc.data().offerOwnerId, asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                 newFilledOther = 0;
                                 newFilledSelf = 0;
                                 newIsFilledSelf = true;
                                 t.update(ref.ref, {offerFilled: newFilledOther, offerIsFilled: true});
 
                             } else {
-                                t.set(newTransactionRef, {users: [doc.data().offerOwnerId, ref.data().offerOwnerId], asset: offerAsset, quantity: newFilledSelf, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
+                                t.set(newTransactionRef, {buyer: offerIsBuy ? doc.data().offerOwnerId : ref.data().offerOwnerId, seller: offerIsBuy ? ref.data().offerOwnerId : doc.data().offerOwnerId, asset: offerAsset, quantity: newFilledSelf, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                 newFilledOther = newFilledOther - newFilledSelf;
                                 newFilledSelf = 0;
                                 newIsFilledSelf = true;

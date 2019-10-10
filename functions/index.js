@@ -14,7 +14,7 @@ exports.newOffer = functions.https.onCall((data, context) => {
     const {offerOwnerId, offerAsset, offerQuantity, offerPrice, offerIsBuy} = data;
     const db = admin.firestore();
     const docRef = db
-        .collection('test')
+        .collection('offers')
         .doc();
 
     return docRef
@@ -29,7 +29,7 @@ exports.newOffer = functions.https.onCall((data, context) => {
             offerQuantity: offerQuantity,
         })
         .then(() => {
-            return db.collection('test')
+            return db.collection('offers')
                 .where('offerAsset', '==', offerAsset)
                 .where('offerIsCanceled', '==', false)
                 .where('offerIsBuy', '==', !offerIsBuy)

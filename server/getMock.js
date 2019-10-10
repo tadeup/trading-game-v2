@@ -7,7 +7,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-let docRef = db.collection('test');
+let docRef = db.collection('offers');
 
 let setAda = docRef.add({
     first: 'sdfg',
@@ -15,7 +15,7 @@ let setAda = docRef.add({
     born: 1814445
 }).then(el=>{console.log('jorge: ' + el)});
 
-db.collection('test').get()
+db.collection('offers').get()
     .then((snapshot) => {
         snapshot.forEach((doc) => {
             console.log(doc.id, '=>', doc.data());

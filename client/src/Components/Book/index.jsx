@@ -79,8 +79,8 @@ class Book extends Component {
                             </Grid>
                         </Grid>
                     </ListItem>
-                    {sellOffers.map(price => (
-                        <ListItem button dense key={price}>
+                    {sellOffers.map((price, key) => (
+                        <ListItem button dense key={key}>
                             <Grid
                                 container
                                 direction="row"
@@ -109,8 +109,8 @@ class Book extends Component {
                         </Grid>
                     </ListItem>
 
-                    {buyOffers.map(price => (
-                        <ListItem button dense key={price}>
+                    {buyOffers.map((price, key) => (
+                        <ListItem button dense key={key}>
                             <Grid
                                 container
                                 direction="row"
@@ -155,7 +155,7 @@ export default compose(
     firestoreConnect((props) => {
         return [
             {
-                collection: 'test',
+                collection: 'offers',
                 where: [
                     ['offerAsset', '==', props.selectedAsset],
                     ['offerIsCanceled', '==', false],
@@ -167,7 +167,7 @@ export default compose(
                 storeAs: 'buyOffers'
             },
             {
-                collection: 'test',
+                collection: 'offers',
                 where: [
                     ['offerAsset', '==', props.selectedAsset],
                     ['offerIsCanceled', '==', false],

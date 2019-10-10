@@ -8,17 +8,17 @@ admin.initializeApp({
 const db = admin.firestore();
 
 const docRef = db
-    .collection('test')
+    .collection('offers')
     .doc('buyOffer');
 
 const offerPrice = 15;
 const offerQuantity = 6;
 const offerIsBuy = true;
-const offerAsset = "test";
+const offerAsset = 'offers';
 
 docRef.set({offerAsset: offerAsset, offerFilled: offerQuantity, offerIsBuy: offerIsBuy, offerIsCanceled: false, offerIsFilled: false, offerOwnerId: "vdYkId5PLFTdAJE4Ej9OEgqDBuf2", offerPrice: offerPrice, offerQuantity: offerQuantity,})
     .then(()=>{
-        return db.collection('test')
+        return db.collection('offers')
             .where('offerAsset', '==', offerAsset )
             .where('offerIsCanceled', '==', false)
             .where('offerIsBuy', '==', false)

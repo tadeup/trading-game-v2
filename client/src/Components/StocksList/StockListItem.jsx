@@ -41,7 +41,14 @@ export const styles = theme => ({
     },
     tableHeader: {
         paddingLeft: 8,
-        whiteSpace: 'nowrap'
+        paddingTop:6,
+        whiteSpace: 'nowrap',
+        color: 'rgba(0, 0, 0, 0.54)',
+        fontSize: '0.75rem',
+        fontWeight: 500,
+        lineHeight: '1.3125rem',
+        textAlign: 'start',
+        letterSpacing: '0.2em'
     },
     timestamp: {
         color: 'rgb(153, 153, 153)'
@@ -73,8 +80,8 @@ const StockListItem = (props) => {
                 spacing={2}
                 className={classes.buttonGridContainer}
             >
-                <Grid item xs={3} className={classes.itemFirst}>
-                    <Typography variant="h4">
+                <Grid item xs={4} className={classes.itemFirst}>
+                    <Typography variant="h5">
                         {asset.assetName}
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
@@ -84,15 +91,9 @@ const StockListItem = (props) => {
                         Total: 1000
                     </Typography>
                 </Grid>
-                <Grid item xs={5} className={classes.gridItem}>
+                <Grid item xs={4} className={classes.gridItem}>
+                    <Typography className={classes.tableHeader}>Últimas Atividades</Typography>
                     <Table size="small" >
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className={classes.tableHeader}>Últimas Atividades</TableCell>
-                                <TableCell/>
-                                <TableCell/>
-                            </TableRow>
-                        </TableHead>
                         <TableBody className={classes.tableActivity}>
                             {activity.length === 4
                                 ? activity.map((el, index, arr) => {
@@ -109,21 +110,14 @@ const StockListItem = (props) => {
                                 : (
                                     <TableRow>
                                         <TableCell align="left">Histórico Indisponível</TableCell>
-                                        <TableCell align="left"/>
-                                        <TableCell align="left"/>
                                     </TableRow>
                                 )}
                         </TableBody>
                     </Table>
                 </Grid>
                 <Grid item xs={4} className={classes.gridItem}>
+                    <Typography className={classes.tableHeader}>Book</Typography>
                     <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className={classes.tableHeader}>Book</TableCell>
-                                <TableCell/>
-                            </TableRow>
-                        </TableHead>
                         <TableBody className={classes.tableBook}>
                             <TableRow style={{backgroundColor: 'rgba(255,44,120,0.1)'}}>
                                 <TableCell component="th" scope="row">11</TableCell>

@@ -16,6 +16,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Skeleton from '@material-ui/lab/Skeleton';
 import { selectAsset } from "./redux/actions";
+import StockListItem from "./StockListItem";
 
 export const styles = theme => ({
     gridList: {
@@ -60,10 +61,6 @@ export const styles = theme => ({
 class StocksList extends Component {
     state = {  };
 
-    handleClick = asset => event => {
-        this.props.selectAsset(asset)
-    };
-
     render() {
         const { classes, assets } = this.props;
         return (
@@ -71,80 +68,7 @@ class StocksList extends Component {
                 <CssBaseline/>
                 <GridList cellHeight={140} className={classes.gridList} cols={1}>
                     {assets ? assets.map(asset=>(
-                        <ButtonBase focusRipple className={classes.buttonElement} key={asset} onClick={this.handleClick(asset)}>
-                            <Grid
-                                container
-                                direction="row"
-                                justify="space-between"
-                                alignItems="center"
-                                spacing={2}
-                                className={classes.buttonGridContainer}
-                            >
-                                <Grid item xs={3} className={classes.itemFirst}>
-                                    <Typography variant="h4">
-                                        {asset.assetName}
-                                    </Typography>
-                                    <Typography variant="h6" color="textSecondary">
-                                        Posição: 666
-                                    </Typography>
-                                    <Typography variant="h6" color="textSecondary">
-                                        Total: 1000
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Table size="small" >
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell className={classes.tableHeader}>Últimas Atividades</TableCell>
-                                                <TableCell/>
-                                                <TableCell/>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody className={classes.tableActivity}>
-                                            <TableRow>
-                                                <TableCell component="th" scope="row" className={classes.lastPricesUp}>10</TableCell>
-                                                <TableCell align="left">20</TableCell>
-                                                <TableCell align="right" className={classes.timestamp}>09:49:06</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell component="th" scope="row" className={classes.lastPricesUp}>10</TableCell>
-                                                <TableCell align="left">20</TableCell>
-                                                <TableCell align="right" className={classes.timestamp}>09:49:06</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell component="th" scope="row" className={classes.lastPricesDown}>10</TableCell>
-                                                <TableCell align="left">20</TableCell>
-                                                <TableCell align="right" className={classes.timestamp}>09:49:06</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell className={classes.tableHeader}>Book</TableCell>
-                                                <TableCell></TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody className={classes.tableBook}>
-                                            <TableRow style={{backgroundColor: 'rgba(255,44,120,0.1)'}}>
-                                                <TableCell component="th" scope="row">11</TableCell>
-                                                <TableCell align="right">20</TableCell>
-                                            </TableRow>
-                                            <TableRow style={{backgroundColor: 'rgb(247, 247, 247)'}}>
-                                                <TableCell component="th" scope="row">10</TableCell>
-                                                <TableCell align="right">20</TableCell>
-                                            </TableRow>
-                                            <TableRow style={{backgroundColor: 'rgba(57, 255, 0, 0.1)'}}>
-                                                <TableCell component="th" scope="row">9</TableCell>
-                                                <TableCell align="right">20</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </Grid>
-                            </Grid>
-                        </ButtonBase>
+                        <StockListItem asset={asset}/>
                     )) : [1,2,3].map(el=><Skeleton height={140} key={el}/>)}
                 </GridList>
             </>

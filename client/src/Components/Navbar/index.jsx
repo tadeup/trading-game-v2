@@ -14,10 +14,6 @@ import {compose} from "redux";
 import {actionTypes} from "redux-firestore";
 import {Link} from "react-router-dom";
 
-const HomeLink = props => <Link to={"/"} {...props}/>;
-const AssetsLink = props => <Link to={"/admin"} {...props}/>;
-const UsersLink = props => <Link to={"/admin/users"} {...props}/>;
-
 const styles = theme => ({
     menuButton: {
         marginRight: theme.spacing(2),
@@ -83,9 +79,9 @@ class Navbar extends Component {
                             onClose={this.handleClose}
                         >
                             <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                            <MenuItem component={HomeLink}>Trade</MenuItem>
-                            <MenuItem component={AssetsLink}>Ativos</MenuItem>
-                            <MenuItem component={UsersLink}>Usuarios</MenuItem>
+                            <MenuItem component={Link} to={'/'}>Trade</MenuItem>
+                            <MenuItem component={Link} to={'/admin'}>Ativos</MenuItem>
+                            <MenuItem component={Link} to={'/admin/users'}>Usuarios</MenuItem>
                             <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
                         </Menu>
                     </div>

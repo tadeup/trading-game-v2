@@ -1,9 +1,7 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
-import { actionTypes } from "redux-firestore";
+import { firestoreConnect } from 'react-redux-firebase'
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
 import {ButtonBase, withStyles} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
@@ -101,7 +99,7 @@ const StockListItem = (props) => {
                                     if (!arr[index+1]) return null;
                                     const isUp = el.price >= arr[index+1].price;
                                     return (
-                                        <TableRow>
+                                        <TableRow key={index}>
                                             <TableCell align="left" className={clsx(isUp ? classes.lastPricesUp : classes.lastPricesDown)}>{el.price} {isUp ? '↑' : '↓'}</TableCell>
                                             <TableCell align="left">{el.quantity}</TableCell>
                                             <TableCell align="right" className={classes.timestamp}>{moment(el.date.toDate()).format('h:mm:ss')}</TableCell>

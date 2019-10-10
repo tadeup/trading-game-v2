@@ -67,8 +67,8 @@ class StocksList extends Component {
             <>
                 <CssBaseline/>
                 <GridList cellHeight={140} className={classes.gridList} cols={1}>
-                    {assets ? assets.map(asset=>(
-                        <StockListItem asset={asset}/>
+                    {assets ? assets.map((asset, index)=>(
+                        <StockListItem asset={asset} key={index}/>
                     )) : [1,2,3].map(el=><Skeleton height={140} key={el}/>)}
                 </GridList>
             </>

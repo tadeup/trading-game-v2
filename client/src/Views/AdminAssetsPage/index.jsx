@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
+import { firestoreConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
 import { withStyles } from "@material-ui/core";

@@ -55,7 +55,7 @@ class Book extends Component {
     state = {  };
 
     render() {
-        const { classes } = this.props;
+        const { classes, buyOffers, sellOffers, selectedAsset } = this.props;
         return (
             <Paper className={classes.paper}>
                 <CssBaseline/>
@@ -79,7 +79,7 @@ class Book extends Component {
                             </Grid>
                         </Grid>
                     </ListItem>
-                    {[20,19,18,17,16,15,14,13,12,11].map(price => (
+                    {sellOffers.map(price => (
                         <ListItem button dense key={price}>
                             <Grid
                                 container
@@ -88,13 +88,13 @@ class Book extends Component {
                                 alignItems="stretch"
                             >
                                 <Grid item xs={4} className={classes.priceSell}>
-                                    {price}
+                                    {price.offerPrice}
                                 </Grid>
                                 <Grid item xs={4} className={classes.quantity}>
-                                    10
+                                    {price.offerFilled}
                                 </Grid>
                                 <Grid item xs={4} className={classes.total}>
-                                    {price * 10}
+                                    {(price.offerPrice * price.offerFilled).toFixed(2)}
                                 </Grid>
                             </Grid>
                         </ListItem>
@@ -104,12 +104,12 @@ class Book extends Component {
                         <Grid container>
                             <Grid item xs={1}/>
                             <Typography variant="h6">
-                                10.5
+                                ---
                             </Typography>
                         </Grid>
                     </ListItem>
 
-                    {[10,9,8,7,6,5,4,3,2,1].map(price => (
+                    {buyOffers.map(price => (
                         <ListItem button dense key={price}>
                             <Grid
                                 container
@@ -118,13 +118,13 @@ class Book extends Component {
                                 alignItems="stretch"
                             >
                                 <Grid item xs={4} className={classes.priceBuy}>
-                                    {price}
+                                    {price.offerPrice}
                                 </Grid>
                                 <Grid item xs={4} className={classes.quantity}>
-                                    10
+                                    {price.offerFilled}
                                 </Grid>
                                 <Grid item xs={4} className={classes.total}>
-                                    {price * 10}
+                                    {(price.offerPrice * price.offerFilled).toFixed(2)}
                                 </Grid>
                             </Grid>
                         </ListItem>
@@ -137,7 +137,9 @@ class Book extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        selectedAsset: state.stockList.selectedAsset ? state.stockList.selectedAsset.assetName : null,
+        buyOffers: state.firestore.ordered.buyOffers ? state.firestore.ordered.buyOffers : [],
+        sellOffers: state.firestore.ordered.sellOffers ? state.firestore.ordered.sellOffers : [],
     }
 };
 
@@ -150,5 +152,32 @@ const mapDispatchToProps = dispatch => {
 export default compose(
     withStyles(styles),
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect(),
+    firestoreConnect((props) => {
+        return [
+            {
+                collection: 'test',
+                where: [
+                    ['offerAsset', '==', props.selectedAsset],
+                    ['offerIsCanceled', '==', false],
+                    ['offerIsFilled', '==', false],
+                    ['offerIsBuy', '==', true],
+                ],
+                orderBy: ['offerPrice', 'desc'],
+                limit: 5,
+                storeAs: 'buyOffers'
+            },
+            {
+                collection: 'test',
+                where: [
+                    ['offerAsset', '==', props.selectedAsset],
+                    ['offerIsCanceled', '==', false],
+                    ['offerIsFilled', '==', false],
+                    ['offerIsBuy', '==', false],
+                ],
+                orderBy: ['offerPrice', 'desc'],
+                limit: 5,
+                storeAs: 'sellOffers'
+            }
+        ]
+    }),
 )(Book)

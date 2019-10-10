@@ -24,7 +24,6 @@ exports.newOffer = functions.https.onCall((data, context) => {
             offerIsBuy: offerIsBuy,
             offerIsCanceled: false,
             offerIsFilled: false,
-            offerIsReady: false,
             offerOwnerId: offerOwnerId,
             offerPrice: offerPrice,
             offerQuantity: offerQuantity,
@@ -35,7 +34,6 @@ exports.newOffer = functions.https.onCall((data, context) => {
                 .where('offerIsCanceled', '==', false)
                 .where('offerIsBuy', '==', !offerIsBuy)
                 .where('offerIsFilled', '==', false)
-                .where('offerIsReady', '==', true)
                 .where('offerPrice', offerIsBuy ? '<=' : '>=', offerPrice)
                 .orderBy('offerPrice', offerIsBuy ? 'asc' : 'desc')
                 .get()
@@ -78,7 +76,7 @@ exports.newOffer = functions.https.onCall((data, context) => {
                                 }
                             }
                         });
-                        t.update(docRef, {offerFilled: newFilledSelf, offerIsFilled: newIsFilledSelf, offerIsReady: true});
+                        t.update(docRef, {offerFilled: newFilledSelf, offerIsFilled: newIsFilledSelf});
                     });
             })
         })

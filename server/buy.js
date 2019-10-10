@@ -16,14 +16,13 @@ const offerQuantity = 6;
 const offerIsBuy = true;
 const offerAsset = "test";
 
-docRef.set({offerAsset: offerAsset, offerFilled: offerQuantity, offerIsBuy: offerIsBuy, offerIsCanceled: false, offerIsFilled: false, offerIsReady: false, offerOwnerId: "vdYkId5PLFTdAJE4Ej9OEgqDBuf2", offerPrice: offerPrice, offerQuantity: offerQuantity,})
+docRef.set({offerAsset: offerAsset, offerFilled: offerQuantity, offerIsBuy: offerIsBuy, offerIsCanceled: false, offerIsFilled: false, offerOwnerId: "vdYkId5PLFTdAJE4Ej9OEgqDBuf2", offerPrice: offerPrice, offerQuantity: offerQuantity,})
     .then(()=>{
         return db.collection('test')
             .where('offerAsset', '==', offerAsset )
             .where('offerIsCanceled', '==', false)
             .where('offerIsBuy', '==', false)
             .where('offerIsFilled', '==', false)
-            .where('offerIsReady', '==', true)
             .where('offerPrice', offerIsBuy ? '<=' : '>=', offerPrice)
             .orderBy('offerPrice', offerIsBuy ? 'asc' : 'desc')
             .get()
@@ -66,7 +65,7 @@ docRef.set({offerAsset: offerAsset, offerFilled: offerQuantity, offerIsBuy: offe
                             }
                         }
                     });
-                    t.update(docRef, {offerFilled: newFilledSelf, offerIsFilled: newIsFilledSelf, offerIsReady: true});
+                    t.update(docRef, {offerFilled: newFilledSelf, offerIsFilled: newIsFilledSelf});
                 });
         })
     })

@@ -58,19 +58,25 @@ export const styles = theme => ({
     },
     lastPricesDown: {
         color: 'rgb(234, 0, 112)',
+    },
+    lastPrices: {
+        fontWeight: 500,
+    },
+    bookLables: {
+        color: 'rgb(153, 153, 153)',
     }
 });
 
 // STATELESS
 const StockListItem = (props) => {
-    const { classes, asset, activity } = props;
+    const { classes, asset, activity, buyOffers, sellOffers } = props;
 
     const handleClick = asset => event => {
         props.selectAsset(asset)
     };
 
     return (
-        <ButtonBase focusRipple className={classes.buttonElement} key={asset} onClick={handleClick(asset)}>
+        <ButtonBase focusRipple className={classes.buttonElement} key={asset.id} onClick={handleClick(asset)}>
             <CssBaseline/>
             <Grid
                 container
@@ -85,10 +91,10 @@ const StockListItem = (props) => {
                         {asset.assetName}
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
-                        Posição: 666
+                        Posição: -
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
-                        Total: 1000
+                        Margem: {asset.assetMargin}
                     </Typography>
                 </Grid>
                 <Grid item xs={4} className={classes.gridItem}>
@@ -98,10 +104,11 @@ const StockListItem = (props) => {
                             {activity.length === 4
                                 ? activity.map((el, index, arr) => {
                                     if (!arr[index+1]) return null;
-                                    const isUp = el.price >= arr[index+1].price;
+                                    const isUp = el.price > arr[index+1].price;
+                                    const isDown = el.price < arr[index+1].price;
                                     return (
                                         <TableRow key={index}>
-                                            <TableCell align="left" className={clsx(isUp ? classes.lastPricesUp : classes.lastPricesDown)}>{el.price} {isUp ? '↑' : '↓'}</TableCell>
+                                            <TableCell align="left" className={clsx(classes.lastPrices, isUp && classes.lastPricesUp, isDown && classes.lastPricesDown)}>{el.price} {isUp ? '↑' : isDown ? '↓' : ''}</TableCell>
                                             <TableCell align="left">{el.quantity}</TableCell>
                                             <TableCell align="right" className={classes.timestamp}>{moment(el.date.toDate()).format('h:mm:ss')}</TableCell>
                                         </TableRow>
@@ -116,20 +123,23 @@ const StockListItem = (props) => {
                     </Table>
                 </Grid>
                 <Grid item xs={4} className={classes.gridItem}>
-                    <Typography className={classes.tableHeader}>Book</Typography>
+                    <Typography className={classes.tableHeader}>Spread</Typography>
                     <Table size="small">
                         <TableBody className={classes.tableBook}>
-                            <TableRow style={{backgroundColor: 'rgba(255,44,120,0.1)'}}>
-                                <TableCell component="th" scope="row">11</TableCell>
-                                <TableCell align="right">20</TableCell>
+                            <TableRow>
+                                <TableCell className={classes.bookLables}>Sell</TableCell>
+                                <TableCell className={clsx(!sellOffers.isEmpty && classes.lastPricesDown)}>{sellOffers.offerPrice}</TableCell>
+                                <TableCell align="right">{sellOffers.offerFilled}</TableCell>
                             </TableRow>
                             <TableRow style={{backgroundColor: 'rgb(247, 247, 247)'}}>
-                                <TableCell component="th" scope="row">10</TableCell>
-                                <TableCell align="right">20</TableCell>
+                                <TableCell className={classes.bookLables}>Last</TableCell>
+                                <TableCell>{activity.length ? activity[0].price : '-'}</TableCell>
+                                <TableCell align="right">{activity.length ? activity[0].quantity : '-'}</TableCell>
                             </TableRow>
-                            <TableRow style={{backgroundColor: 'rgba(57, 255, 0, 0.1)'}}>
-                                <TableCell component="th" scope="row">9</TableCell>
-                                <TableCell align="right">20</TableCell>
+                            <TableRow>
+                                <TableCell className={classes.bookLables}>Buy</TableCell>
+                                <TableCell className={clsx(!buyOffers.isEmpty && classes.lastPricesUp)}>{buyOffers.offerPrice}</TableCell>
+                                <TableCell align="right">{buyOffers.offerFilled}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -140,9 +150,14 @@ const StockListItem = (props) => {
 };
 
 const mapStateToProps = (state, ownProps) => {
+    const buyOffers = state.firestore.ordered[ownProps.asset.assetName + 'BuyOffers'];
+    const sellOffers = state.firestore.ordered[ownProps.asset.assetName + 'SellOffers'];
+
     return {
         selectedAsset: state.stockList.selectedAsset ? state.stockList.selectedAsset.assetName : null,
-        activity: state.firestore.ordered[ownProps.asset.assetName] || []
+        activity: state.firestore.ordered[ownProps.asset.assetName] || [],
+        buyOffers: buyOffers && buyOffers[0] ? buyOffers[0] : {offerFilled: '-', offerPrice: '-', isEmpty: true},
+        sellOffers: sellOffers && sellOffers[0] ? sellOffers[0] : {offerFilled: '-', offerPrice: '-', isEmpty: true},
     }
 };
 
@@ -165,6 +180,30 @@ export default compose(
                 orderBy: ['date', 'desc'],
                 limit: 4,
                 storeAs: props.asset.assetName
+            },
+            {
+                collection: 'offers',
+                where: [
+                    ['offerAsset', '==', props.asset.assetName],
+                    ['offerIsCanceled', '==', false],
+                    ['offerIsFilled', '==', false],
+                    ['offerIsBuy', '==', true],
+                ],
+                orderBy: ['offerPrice', 'desc'],
+                limit: 1,
+                storeAs: props.asset.assetName + 'BuyOffers'
+            },
+            {
+                collection: 'offers',
+                where: [
+                    ['offerAsset', '==', props.asset.assetName],
+                    ['offerIsCanceled', '==', false],
+                    ['offerIsFilled', '==', false],
+                    ['offerIsBuy', '==', false],
+                ],
+                orderBy: ['offerPrice', 'desc'],
+                limit: 1,
+                storeAs: props.asset.assetName + 'SellOffers'
             }
         ]
     }),

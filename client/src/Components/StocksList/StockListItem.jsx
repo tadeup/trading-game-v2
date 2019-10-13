@@ -7,7 +7,6 @@ import {ButtonBase, withStyles} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
@@ -69,7 +68,7 @@ export const styles = theme => ({
 
 // STATELESS
 const StockListItem = (props) => {
-    const { classes, asset, activity, buyOffers, sellOffers } = props;
+    const { classes, asset, activity, buyOffers, sellOffers, profile } = props;
 
     const handleClick = asset => event => {
         props.selectAsset(asset)
@@ -91,7 +90,7 @@ const StockListItem = (props) => {
                         {asset.assetName}
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
-                        Posição: -
+                        Posição: {profile.positions[asset.assetName]}
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
                         Margem: {asset.assetMargin}

@@ -1,19 +1,9 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
-import { actionTypes } from "redux-firestore";
+import {firestoreConnect, isLoaded} from 'react-redux-firebase'
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {GridList, GridListTile, Paper, ButtonBase, withStyles, TextField} from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
+import {GridList, withStyles } from "@material-ui/core";
 import Skeleton from '@material-ui/lab/Skeleton';
 import { selectAsset } from "./redux/actions";
 import StockListItem from "./StockListItem";
@@ -62,13 +52,13 @@ class StocksList extends Component {
     state = {  };
 
     render() {
-        const { classes, assets } = this.props;
+        const { classes, assets, profile } = this.props;
         return (
             <>
                 <CssBaseline/>
                 <GridList cellHeight={140} className={classes.gridList} cols={1}>
-                    {assets ? assets.map((asset, index)=>(
-                        <StockListItem asset={asset} key={index}/>
+                    {assets && isLoaded(profile) ? assets.map((asset, index)=>(
+                        <StockListItem asset={asset} profile={profile} key={index}/>
                     )) : [1,2,3].map(el=><Skeleton height={140} key={el}/>)}
                 </GridList>
             </>
@@ -78,7 +68,8 @@ class StocksList extends Component {
 
 const mapStateToProps = state => {
     return {
-        assets: state.firestore.ordered.assets
+        assets: state.firestore.ordered.assets,
+        profile: state.firebase.profile,
     }
 };
 

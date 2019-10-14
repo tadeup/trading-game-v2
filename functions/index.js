@@ -11,7 +11,15 @@ admin.initializeApp(ServiceAccount);
 // });
 
 exports.newOffer = functions.https.onCall((data, context) => {
-    const {offerOwnerId, offerAsset, offerQuantity, offerPrice, offerIsBuy} = data;
+    const {offerOwnerId, offerAsset, offerQuantity, offerPrice, offerIsBuy, metaMargin, metaProfile} = data;
+
+    const hasMargin = offerIsBuy
+        ? metaProfile.positions[offerAsset] + offerQuantity < metaMargin
+        : metaProfile.positions[offerAsset] - offerQuantity > metaMargin;
+    if (!metaProfile.isAdmin && !hasMargin) {
+        return {success: false, error: 'NO_MARGIN'};
+    }
+
     const db = admin.firestore();
     const docRef = db
         .collection('offers')

@@ -73,7 +73,7 @@ class NewOrder extends Component {
     };
 
     handleSubmit = () => {
-        if (this.props.selectedAsset && this.props.selectedAsset.assetName && this.state.quantity && this.state.price) {
+        if (this.props.selectedAsset && this.props.selectedAsset.assetName && this.props.selectedAsset.assetMargin && this.state.quantity && this.state.price) {
             this.setState({ isSending: true }, () => {
                 const newOffer = this.props.firebase.functions().httpsCallable('newOffer');
                 newOffer({
@@ -82,14 +82,17 @@ class NewOrder extends Component {
                     offerOwnerId: this.props.auth.uid,
                     offerPrice: this.state.price,
                     offerQuantity: this.state.quantity,
+                    metaMargin: this.props.selectedAsset.assetMargin,
+                    metaProfile: this.props.profile
                 }).then((res)=>{
                     console.log(res);
                     if (res.data && res.data.success) {
                         this.setState({ quantity: '', price: '', isSending: false, snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Oferta Enviada com Sucesso!' })
+                    } else if (res.data.error === 'NO_MARGIN') {
+                        this.setState({ isSending: false, snackbarOpen: true, snackbarVariant: 'warning', snackbarMessage: 'Margem Insuficiente!' })
                     } else {
                         this.setState({ quantity: '', price: '', isSending: false, snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
                     }
-
                 })
             });
         } else if (!this.state.quantity || !this.state.price) {

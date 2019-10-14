@@ -90,7 +90,7 @@ const StockListItem = (props) => {
                         {asset.assetName}
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
-                        Posição: {profile.positions[asset.assetName]}
+                        Posição: {profile.positions[asset.assetName].open}
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
                         Margem: {asset.assetMargin}

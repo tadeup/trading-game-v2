@@ -102,7 +102,7 @@ Promise.all([setOffer, setUserOpenMargin])
                     });
                     t.update(docRef, {offerFilled: newFilledSelf, offerIsFilled: newIsFilledSelf});
                     Object.entries(usersClosedMarginUpdate).forEach(userUpdate => {
-                        t.update(db.collection('users').doc(userUpdate[0]), {['positions.'+offerAsset+'.closed']: admin.firestore.FieldValue.increment(userUpdate[1])});
+                        t.update(db.collection('users').doc(userUpdate[0]), {['positions.'+offerAsset+'.closed']: admin.firestore.FieldValue.increment(userUpdate[1]), ['positions.'+offerAsset+'.open']: admin.firestore.FieldValue.increment(-userUpdate[1])});
                     })
                 });
         })

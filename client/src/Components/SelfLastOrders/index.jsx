@@ -5,13 +5,14 @@ import { compose } from 'redux'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, withStyles} from "@material-ui/core";
+import {Paper, Snackbar, withStyles} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
+import MySnackbarContentWrapper from "../CustomizedSnackbars";
 
 export const styles = theme => ({
     main: {
@@ -39,10 +40,60 @@ export const styles = theme => ({
 
 // STATEFUL
 class SelfLastOrders extends Component {
-    state = {  };
+    state = {
+        snackbarOpen: false,
+        snackbarVariant: 'info',
+        snackbarMessage: ''
+    };
+
+    handleCancel = offer => () => {
+        const deleteOffers = this.props.firebase.functions().httpsCallable('deleteOffers');
+        deleteOffers({
+            offers: [offer],
+            offerOwnerId: this.props.auth.uid,
+            offerAsset: offer.offerAsset
+        }).then((res)=>{
+            console.log(res);
+            if (res.data && res.data.success) {
+                this.setState({ snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Oferta Cancelada com Sucesso!' })
+            } else {
+                this.setState({ snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
+            }
+        })
+    };
+
+    handleCancelAll = offers => () => {
+        if (offers.length) {
+            const offerAsset = offers[0].offerAsset;
+            const deleteOffers = this.props.firebase.functions().httpsCallable('deleteOffers');
+            deleteOffers({
+                offers: offers,
+                offerOwnerId: this.props.auth.uid,
+                offerAsset
+            }).then((res)=>{
+                console.log(res);
+                if (res.data && res.data.success) {
+                    this.setState({ snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Oferta Cancelada com Sucesso!' })
+                } else {
+                    this.setState({ snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
+                }
+            })
+        } else {
+            this.setState({ snackbarOpen: true, snackbarVariant: 'warning', snackbarMessage: 'Nenhuma oferta Encontrada!' })
+        }
+    };
+
+    handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({snackbarOpen: false});
+    };
 
     render() {
-        const { classes } = this.props;
+        const { classes, selfOffers } = this.props;
+        const { snackbarOpen, snackbarMessage, snackbarVariant } = this.state;
         return (
             <Paper className={classes.main}>
                 <CssBaseline/>
@@ -53,20 +104,20 @@ class SelfLastOrders extends Component {
                             <TableCell align="left">Qtd.</TableCell>
                             <TableCell align="left">Tipo</TableCell>
                             <TableCell align="right">
-                                <Button className={classes.cancelAllButton} color="secondary">
+                                <Button className={classes.cancelAllButton} color="secondary" onClick={this.handleCancelAll(selfOffers)}>
                                     Cancelar Todos
                                 </Button>
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody className={classes.tableBody}>
-                        {[1,2,3,4,5,6,7,8,9,10].map(row => (
-                            <TableRow key={row}>
-                                <TableCell align="left">{row}</TableCell>
-                                <TableCell align="left">{row}</TableCell>
-                                <TableCell align="left">{row%2 ? "compra" : "venda"}</TableCell>
+                        {selfOffers.map(offer => (
+                            <TableRow key={offer.id}>
+                                <TableCell align="left">{offer.offerPrice}</TableCell>
+                                <TableCell align="left">{offer.offerFilled}</TableCell>
+                                <TableCell align="left">{offer.offerIsBuy ? "compra" : "venda"}</TableCell>
                                 <TableCell align="right">
-                                    <Button className={classes.cancelButton} variant={'outlined'}>
+                                    <Button className={classes.cancelButton} variant={'outlined'} onClick={this.handleCancel(offer)}>
                                         Cancelar
                                     </Button>
                                 </TableCell>
@@ -74,6 +125,23 @@ class SelfLastOrders extends Component {
                         ))}
                     </TableBody>
                 </Table>
+
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    autoHideDuration={1000}
+                    onClose={this.handleClose}
+                    open={snackbarOpen}
+                >
+                    <MySnackbarContentWrapper
+                        onClose={this.handleClose}
+                        variant={snackbarVariant}
+                        message={snackbarMessage}
+                    />
+                </Snackbar>
+
             </Paper>
         );
     }
@@ -81,7 +149,11 @@ class SelfLastOrders extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        selfOffers: state.firestore.ordered.buyOffers && state.firestore.ordered.sellOffers
+            ? [...state.firestore.ordered.buyOffers, ...state.firestore.ordered.sellOffers].filter(offer=>offer.offerOwnerId===state.firebase.auth.uid)
+            : [],
+        auth: state.firebase.auth,
+        profile: state.firebase.profile
     }
 };
 

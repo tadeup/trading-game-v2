@@ -15,6 +15,7 @@ import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
     paper: {
+        height: 646,
         minWidth: 300,
     },
     priceHeader: {
@@ -48,6 +49,10 @@ const styles = theme => ({
     },
     priceCentral: {
         backgroundColor: 'rgb(247, 247, 247)',
+    },
+    last: {
+        textAlign: 'center',
+        color: 'rgb(153, 153, 153)',
     }
 });
 
@@ -55,7 +60,7 @@ class Book extends Component {
     state = {  };
 
     render() {
-        const { classes, buyOffers, sellOffers, selectedAsset } = this.props;
+        const { classes, buyOffers, sellOffers, selectedAsset, lastPrice } = this.props;
         return (
             <Paper className={classes.paper}>
                 <CssBaseline/>
@@ -101,12 +106,44 @@ class Book extends Component {
                     ))}
 
                     <ListItem className={classes.priceCentral} dense>
-                        <Grid container>
-                            <Grid item xs={1}/>
-                            <Typography variant="h6">
-                                ---
-                            </Typography>
-                        </Grid>
+                        {lastPrice.price && lastPrice.quantity
+                            ? (
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="space-between"
+                                    alignItems="stretch"
+                                >
+                                    <Grid item xs={12} className={classes.last}>
+                                        <Typography variant="h6">
+                                            Último preço: <span style={{marginLeft: 18}}>${lastPrice.price.toFixed(2)}</span>
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            ) : (
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="space-between"
+                                    alignItems="stretch"
+                                >
+                                    <Grid item xs={4} className={classes.last}>
+                                        <Typography variant="h6">
+                                            -
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4} className={classes.last}>
+                                        <Typography variant="h6">
+                                            -
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4} className={classes.last}>
+                                        <Typography variant="h6">
+                                            -
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            )}
                     </ListItem>
 
                     {buyOffers.map((price, key) => (
@@ -135,11 +172,13 @@ class Book extends Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+    const selectedAsset = state.stockList.selectedAsset ? state.stockList.selectedAsset.assetName : null;
     return {
-        selectedAsset: state.stockList.selectedAsset ? state.stockList.selectedAsset.assetName : null,
+        selectedAsset: selectedAsset,
         buyOffers: state.firestore.ordered.buyOffers ? state.firestore.ordered.buyOffers : [],
-        sellOffers: state.firestore.ordered.sellOffers ? state.firestore.ordered.sellOffers : [],
+        sellOffers: state.firestore.ordered.sellOffers ? state.firestore.ordered.sellOffers.slice().reverse() : [],
+        lastPrice: state.firestore.ordered[selectedAsset] && state.firestore.ordered[selectedAsset].length ? state.firestore.ordered[selectedAsset][0] : {},
     }
 };
 
@@ -163,7 +202,7 @@ export default compose(
                     ['offerIsBuy', '==', true],
                 ],
                 orderBy: ['offerPrice', 'desc'],
-                limit: 5,
+                limit: 10,
                 storeAs: 'buyOffers'
             },
             {
@@ -174,8 +213,8 @@ export default compose(
                     ['offerIsFilled', '==', false],
                     ['offerIsBuy', '==', false],
                 ],
-                orderBy: ['offerPrice', 'desc'],
-                limit: 5,
+                orderBy: ['offerPrice'],
+                limit: 10,
                 storeAs: 'sellOffers'
             }
         ]

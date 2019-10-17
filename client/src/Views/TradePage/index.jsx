@@ -27,6 +27,7 @@ class TradePage extends Component {
                     justify="flex-start"
                     alignItems="stretch"
                     spacing={4}
+                    className={classes.container}
                 >
                     <Grid item xs={3}>
                         <Grid

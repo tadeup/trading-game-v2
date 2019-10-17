@@ -5,7 +5,7 @@ import { compose } from 'redux'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, Snackbar, withStyles} from "@material-ui/core";
+import {Paper, Snackbar, Typography, withStyles} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -35,6 +35,15 @@ export const styles = theme => ({
         padding: '0 3px',
         textTransform: 'none',
         borderRadius: 2
+    },
+    offersNotFoundCell: {
+        height: 200,
+        borderBottom: 'none'
+    },
+    offersNotFoundText: {
+        margin: 'auto',
+        textAlign: 'center',
+        color: 'rgba(153,153,153)'
     }
 });
 
@@ -92,7 +101,7 @@ class SelfLastOrders extends Component {
     };
 
     render() {
-        const { classes, selfOffers } = this.props;
+        const { classes, selfOffers, selectedAsset } = this.props;
         const { snackbarOpen, snackbarMessage, snackbarVariant } = this.state;
         return (
             <Paper className={classes.main}>
@@ -111,18 +120,30 @@ class SelfLastOrders extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody className={classes.tableBody}>
-                        {selfOffers.map(offer => (
-                            <TableRow key={offer.id}>
-                                <TableCell align="left">{offer.offerPrice}</TableCell>
-                                <TableCell align="left">{offer.offerFilled}</TableCell>
-                                <TableCell align="left">{offer.offerIsBuy ? "compra" : "venda"}</TableCell>
-                                <TableCell align="right">
-                                    <Button className={classes.cancelButton} variant={'outlined'} onClick={this.handleCancel(offer)}>
-                                        Cancelar
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {selectedAsset && selfOffers.length
+                            ? (
+                                selfOffers.map(offer => (
+                                    <TableRow key={offer.id}>
+                                        <TableCell align="left">{offer.offerPrice}</TableCell>
+                                        <TableCell align="left">{offer.offerFilled}</TableCell>
+                                        <TableCell align="left">{offer.offerIsBuy ? "compra" : "venda"}</TableCell>
+                                        <TableCell align="right">
+                                            <Button className={classes.cancelButton} variant={'outlined'} onClick={this.handleCancel(offer)}>
+                                                Cancelar
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )
+                            : (
+                                <TableRow>
+                                    <TableCell colSpan={4} className={classes.offersNotFoundCell}>
+                                        <Typography variant="h6" gutterBottom className={classes.offersNotFoundText}>
+                                            Nenhuma ordem encontrada
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
                     </TableBody>
                 </Table>
 
@@ -153,7 +174,8 @@ const mapStateToProps = state => {
             ? [...state.firestore.ordered.buyOffers, ...state.firestore.ordered.sellOffers].filter(offer=>offer.offerOwnerId===state.firebase.auth.uid)
             : [],
         auth: state.firebase.auth,
-        profile: state.firebase.profile
+        profile: state.firebase.profile,
+        selectedAsset: state.stockList.selectedAsset ? state.stockList.selectedAsset : null,
     }
 };
 

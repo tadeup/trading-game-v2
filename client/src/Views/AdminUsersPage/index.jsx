@@ -8,6 +8,7 @@ import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
 import { withStyles } from "@material-ui/core";
 import { styles } from "./styles";
 import NewUser from "../../Components/NewUser";
+import UsersList from "../../Components/UsersList";
 
 // STATELESS
 const AdminUsersPage = (props) => {
@@ -15,24 +16,9 @@ const AdminUsersPage = (props) => {
     <>
       <CssBaseline/>
       <NewUser/>
+      <UsersList/>
     </>
   );
-};
-
-AdminUsersPage.propTypes = {
-  // Optional props
-  auth: PropTypes.object.isRequired,
-  clearFirestore: PropTypes.func.isRequired,
-
-  // Required Functions
-  dispatch: PropTypes.func.isRequired,
-  // Required Objects
-  classes: PropTypes.object.isRequired,
-  firebase: PropTypes.object.isRequired,
-  firestore: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {

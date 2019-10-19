@@ -9,15 +9,36 @@ import { withStyles } from "@material-ui/core";
 import { styles } from "./styles";
 import Grid from "@material-ui/core/Grid";
 import NewAsset from "../../Components/NewAsset";
+import AssetsList from "../../Components/AssetsList";
 
 // STATELESS
 const AdminAssetsPage = (props) => {
   return (
     <>
       <CssBaseline/>
-      <Grid container>
-        <NewAsset/>
+        <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+            spacing={2}
+        >
+          <Grid item xs={12}>
+            <NewAsset/>
+          </Grid>
       </Grid>
+        <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+        >
+          <Grid item xs={12}>
+            <AssetsList/>
+          </Grid>
+
+        </Grid>
+
     </>
   );
 };

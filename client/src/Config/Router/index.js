@@ -12,7 +12,7 @@ const indexRoutes = [
   { path: "/admin", name: "AdminPage", component: AdminPage },
 
   // home path must come last
-  { path: "/", name: "HomePage", component: HomePage },
+  { path: "/trade", name: "HomePage", component: HomePage },
 ];
 
 export default indexRoutes;

@@ -51,7 +51,7 @@ class LoginPage extends Component {
         }
 
         if (!isEmpty(auth)) {
-            return <Redirect exact to={'/'}/>
+            return <Redirect exact to={'/trade'}/>
         }
 
         return (

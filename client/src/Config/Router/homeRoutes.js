@@ -1,10 +1,10 @@
 // import SettingsPage from '../views/SettingsPage'
-// import RegisterPage from '../views/RegisterPage'
+import ProfilePage from '../../Views/ProfilePage'
 import TradePage from '../../Views/TradePage'
 
 const homeRoutes = [
   // { path: '/settings', name: 'SettingsPage', component: SettingsPage},
-  // { path: '/register', name: 'RegisterPage', component: RegisterPage},
+  { path: '/profile', name: 'ProfilePage', component: ProfilePage},
 
   // home path must come last
   { path: "/",name: 'TradePage', component: TradePage },

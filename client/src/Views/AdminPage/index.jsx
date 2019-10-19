@@ -23,7 +23,7 @@ const AdminPage = ({auth, profile, classes, match}) => {
   }
 
   if (!profile.isAdmin) {
-    return <Redirect exact to={'/'}/>
+    return <Redirect exact to={'/trade'}/>
   }
 
   return (

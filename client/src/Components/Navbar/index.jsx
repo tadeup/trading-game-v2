@@ -75,8 +75,8 @@ class Navbar extends Component {
                             open={Boolean(anchorEl)}
                             onClose={this.handleClose}
                         >
-                            <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                            <MenuItem component={Link} to={'/'}>Trade</MenuItem>
+                            <MenuItem component={Link} to={'/trade/profile'}>Profile</MenuItem>
+                            <MenuItem component={Link} to={'/trade'}>Trade</MenuItem>
                             <MenuItem component={Link} to={'/admin'}>Ativos</MenuItem>
                             <MenuItem component={Link} to={'/admin/users'}>Usuarios</MenuItem>
                             <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>

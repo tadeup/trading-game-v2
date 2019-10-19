@@ -13,8 +13,8 @@ import homeRoutes from "../../Config/Router/homeRoutes";
 import Navbar from "../../Components/Navbar";
 
 // STATELESS
-const HomePage = ({auth, classes, match}) => {
-  if (!isLoaded(auth)) {
+const HomePage = ({auth, profile, classes, match}) => {
+  if (!isLoaded(auth) || !isLoaded(profile)) {
     return <Loader/>
   }
 
@@ -53,7 +53,8 @@ HomePage.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    auth: state.firebase.auth
+    auth: state.firebase.auth,
+    profile: state.firebase.profile
   }
 };
 

@@ -34,6 +34,7 @@ class AssetsList extends Component {
                             <TableCell align="center">Status</TableCell>
                             <TableCell align="center">Margem</TableCell>
                             <TableCell align="center">Preço Final</TableCell>
+                            <TableCell align="center">Baixar Dados</TableCell>
                             <TableCell align="center">Apagar</TableCell>
                         </TableRow>
                     </TableHead>

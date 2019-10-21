@@ -10,8 +10,11 @@ import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from '@material-ui/icons/Close';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import { CSVLink, CSVDownload } from "react-csv";
+import moment from "moment";
 
 export const styles = theme => ({
     finalPriceField: {
@@ -26,7 +29,8 @@ export const styles = theme => ({
 class AssetsListItem extends Component {
     state = {
         finalPrice: this.props.asset.assetFinalPrice || '',
-        isEditingLocked: true
+        isEditingLocked: true,
+        dataToDownload: []
     };
 
     handleActivate = asset => event => {
@@ -44,7 +48,7 @@ class AssetsListItem extends Component {
     };
 
     handleSetFinalPrice = asset => event => {
-        this.props.firestore.update({ collection: 'assets', doc: asset.id }, {assetIsActive: false, assetFinalPrice: Number(this.state.finalPrice)})
+        this.props.firestore.update({ collection: 'assets', doc: asset.id }, {assetIsActive: false, assetFinalPrice: Number(this.state.finalPrice)});
         this.setState({isEditingLocked: true})
     };
 
@@ -53,9 +57,24 @@ class AssetsListItem extends Component {
         this.setState({isEditingLocked: false})
     };
 
+    handleDownload = asset => event => {
+        this.props.firestore.get({
+            collection: 'transactions',
+            where: [
+                ['asset', '==', asset.assetName],
+            ],
+            orderBy: ['date', 'desc']
+        }).then(data=> {
+            const dataToDownload = data.docs.map(doc => ({...doc.data(), date: moment(doc.data().date.toDate()).format('hh:mm:ss')}));
+            this.setState({ dataToDownload }, () => {
+                this.csvLink.link.click()
+            })
+        });
+    };
+
     render() {
         const { classes, assetsList, index, asset } = this.props;
-        const { finalPrice, isEditingLocked } = this.state;
+        const { finalPrice, isEditingLocked, dataToDownload } = this.state;
         return (
             <TableRow key={index}>
                 <CssBaseline/>
@@ -91,6 +110,16 @@ class AssetsListItem extends Component {
                         ? (<Button onClick={this.handleEditFinalPrice} className={classes.finalPriceButton}>Editar</Button>)
                         : (<Button onClick={this.handleSetFinalPrice(asset)} className={classes.finalPriceButton}>Salvar</Button>)
                     }
+                </TableCell>
+                <TableCell align="center">
+                    <IconButton
+                        color="primary"
+                        className={classes.button}
+                        onClick={this.handleDownload(asset)}
+                    >
+                        <SaveAltIcon fontSize="small" />
+                    </IconButton>
+                    <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`${asset.assetName}.csv`}/>
                 </TableCell>
                 <TableCell align="center">
                     <IconButton color="secondary" className={classes.button} aria-label="add an alarm">

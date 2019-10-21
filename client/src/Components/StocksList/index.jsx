@@ -86,6 +86,9 @@ export default compose(
         return [
             {
                 collection: 'assets',
+                where: [
+                    ['assetIsActive', '==', true],
+                ],
             }
         ]
     }),

@@ -4,16 +4,15 @@ import { compose } from 'redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, Table, TextField, withStyles} from "@material-ui/core";
+import {Paper, Table, withStyles} from "@material-ui/core";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
+import AssetsListItem from "./AssetListItem";
 
 export const styles = theme => ({
-    textField: {
 
-    }
 });
 
 // STATEFUL
@@ -40,13 +39,7 @@ class AssetsList extends Component {
                     </TableHead>
                     <TableBody>
                         {assetsList.map((asset, index) => (
-                            <TableRow key={index}>
-                                <TableCell align="center">{asset.assetName}</TableCell>
-                                <TableCell align="center">{asset.assetIsActive ? 'Ativo' : 'Inativo'}</TableCell>
-                                <TableCell align="center">{asset.assetMargin}</TableCell>
-                                <TableCell align="center"><TextField/></TableCell>
-                                <TableCell align="center">x</TableCell>
-                            </TableRow>
+                            <AssetsListItem asset={asset} key={index}/>
                         ))}
                     </TableBody>
                 </Table>

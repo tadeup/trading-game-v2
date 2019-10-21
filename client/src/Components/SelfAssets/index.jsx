@@ -4,15 +4,10 @@ import { compose } from 'redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
 import {Paper, Table, withStyles} from "@material-ui/core";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpandMoreIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import Typography from "@material-ui/core/Typography";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 
 export const styles = theme => ({
     heading: {
@@ -37,13 +32,14 @@ class SelfAssets extends Component {
         const {  } = this.state;
         const positions = {};
         Object.keys(profile.positions).forEach(el=>{positions[el]=0});
-        const finalValue = 10;
 
         buyer.forEach(transaction => {
-            positions[transaction.asset] += (transaction.price - finalValue) * transaction.quantity
+            const finalPrice = this.props.assets.filter(el => el.assetName === transaction.asset)[0];
+            positions[transaction.asset] += (transaction.price - (finalPrice ? finalPrice.assetFinalPrice : 0)) * transaction.quantity
         });
         seller.forEach(transaction => {
-            positions[transaction.asset] -= (transaction.price - finalValue) * transaction.quantity
+            const finalPrice = this.props.assets.filter(el => el.assetName === transaction.asset)[0];
+            positions[transaction.asset] -= (transaction.price - (finalPrice ? finalPrice.assetFinalPrice : 0)) * transaction.quantity
         });
 
         return (
@@ -64,7 +60,7 @@ class SelfAssets extends Component {
                                 <TableCell>{asset[0]}</TableCell>
                                 <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].open}</TableCell>
                                 <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].closed}</TableCell>
-                                <TableCell>{asset[1]}</TableCell>
+                                <TableCell>{asset[1].toFixed(2)}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -80,6 +76,7 @@ const mapStateToProps = state => {
         profile: state.firebase.profile,
         buyer: state.firestore.ordered.buyer || [],
         seller: state.firestore.ordered.seller || [],
+        assets: state.firestore.ordered.assets || [],
     }
 };
 

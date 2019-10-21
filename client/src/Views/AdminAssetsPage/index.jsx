@@ -9,7 +9,7 @@ import { withStyles } from "@material-ui/core";
 import { styles } from "./styles";
 import Grid from "@material-ui/core/Grid";
 import NewAsset from "../../Components/NewAsset";
-import AssetsList from "../../Components/AssetsList";
+import AssetsList from "../../Components/AdminAssetsList";
 
 // STATELESS
 const AdminAssetsPage = (props) => {

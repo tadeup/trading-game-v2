@@ -104,12 +104,5 @@ const mapDispatchToProps = dispatch => {
 export default compose(
     withStyles(styles),
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect((props) => {
-        return [
-            {
-                collection: 'users',
-                storeAs: 'usersList'
-            },
-        ]
-    }),
+    firestoreConnect(),
 )(UsersList)

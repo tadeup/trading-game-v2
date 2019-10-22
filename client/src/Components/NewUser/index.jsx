@@ -74,7 +74,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    clearFirestore: () => dispatch({ type: actionTypes.CLEAR_DATA })
+
   }
 };
 

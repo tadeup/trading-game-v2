@@ -1,7 +1,7 @@
 import HomePage from '../../Views/HomePage';
 import LoginPage from '../../Views/LoginPage';
 import AdminPage from '../../Views/AdminPage';
-// import NotFoundPage from '../views/NotFoundPage'
+import NotFoundPage from '../../Views/NotFoundPage'
 
 const indexRoutes = [
   //sub routes
@@ -10,9 +10,10 @@ const indexRoutes = [
   //main routes
   { path: "/login", name: "LoginPage", component: LoginPage },
   { path: "/admin", name: "AdminPage", component: AdminPage },
+  { path: "/trade", name: "HomePage", component: HomePage },
 
   // home path must come last
-  { path: "/trade", name: "HomePage", component: HomePage },
+  { path: "/", name: "NotFoundPage", component: NotFoundPage },
 ];
 
 export default indexRoutes;

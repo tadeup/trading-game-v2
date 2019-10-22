@@ -11,6 +11,7 @@ import Loader from "../../Components/Loader";
 import {Redirect, Switch, Route} from "react-router-dom";
 import adminRoutes from "../../Config/Router/adminRoutes";
 import Navbar from "../../Components/Navbar";
+import NotFoundPage from "../NotFoundPage";
 
 // STATELESS
 const AdminPage = ({auth, profile, classes, match}) => {
@@ -33,26 +34,11 @@ const AdminPage = ({auth, profile, classes, match}) => {
       <Container maxWidth={'xl'} className={classes.container}>
         <Switch>
           { adminRoutes.map((prop, key) => {return <Route exact path={`${match.path}${prop.path}`} key={key} component={prop.component}/>}) }
+          <Route component={NotFoundPage} />
         </Switch>
       </Container>
     </>
   );
-};
-
-AdminPage.propTypes = {
-  // Optional props
-  auth: PropTypes.object.isRequired,
-  clearFirestore: PropTypes.func.isRequired,
-
-  // Required Functions
-  dispatch: PropTypes.func.isRequired,
-  // Required Objects
-  classes: PropTypes.object.isRequired,
-  firebase: PropTypes.object.isRequired,
-  firestore: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -71,5 +57,16 @@ const mapDispatchToProps = dispatch => {
 export default compose(
   withStyles(styles),
   connect(mapStateToProps, mapDispatchToProps),
-  firestoreConnect(),
+  firestoreConnect((props) => {
+    return [
+      {
+        collection: 'assets',
+        storeAs: 'assetsList'
+      },
+      {
+        collection: 'users',
+        storeAs: 'usersList'
+      },
+    ]
+  }),
 )(AdminPage)

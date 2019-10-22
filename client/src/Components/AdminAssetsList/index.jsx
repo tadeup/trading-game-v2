@@ -57,19 +57,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        clearFirestore: () => dispatch({ type: actionTypes.CLEAR_DATA })
+
     }
 };
 
 export default compose(
     withStyles(styles),
     connect(mapStateToProps, mapDispatchToProps),
-    firestoreConnect((props) => {
-        return [
-            {
-                collection: 'assets',
-                storeAs: 'assetsList'
-            },
-        ]
-    }),
+    firestoreConnect(),
 )(AssetsList)

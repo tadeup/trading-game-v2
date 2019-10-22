@@ -41,7 +41,7 @@ class Navbar extends Component {
     };
 
     render() {
-        const { classes } = this.props;
+        const { classes, profile } = this.props;
         const { anchorEl } = this.state;
 
         return (
@@ -77,8 +77,12 @@ class Navbar extends Component {
                         >
                             <MenuItem component={Link} to={'/trade/profile'}>Profile</MenuItem>
                             <MenuItem component={Link} to={'/trade'}>Trade</MenuItem>
-                            <MenuItem component={Link} to={'/admin'}>Ativos</MenuItem>
-                            <MenuItem component={Link} to={'/admin/users'}>Usuarios</MenuItem>
+                            {profile.isAdmin && (
+                                <>
+                                    <MenuItem component={Link} to={'/admin'}>Ativos</MenuItem>
+                                    <MenuItem component={Link} to={'/admin/users'}>Usuarios</MenuItem>
+                                </>
+                            )}
                             <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
                         </Menu>
                     </div>
@@ -90,7 +94,7 @@ class Navbar extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        profile: state.firebase.profile
     }
 };
 

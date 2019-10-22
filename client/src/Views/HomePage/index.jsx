@@ -11,6 +11,7 @@ import Loader from "../../Components/Loader";
 import {Redirect, Switch, Route} from "react-router-dom";
 import homeRoutes from "../../Config/Router/homeRoutes";
 import Navbar from "../../Components/Navbar";
+import NotFoundPage from "../NotFoundPage";
 
 // STATELESS
 const HomePage = ({auth, profile, classes, match}) => {
@@ -29,6 +30,7 @@ const HomePage = ({auth, profile, classes, match}) => {
         <Container maxWidth={'xl'} className={classes.container}>
           <Switch>
             { homeRoutes.map((prop, key) => {return <Route exact path={`${match.path}${prop.path}`} key={key} component={prop.component}/>}) }
+            <Route component={NotFoundPage} />
           </Switch>
         </Container>
       </>

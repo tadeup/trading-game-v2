@@ -18,7 +18,9 @@ export const styles = theme => ({
 class NewUser extends Component {
     state = {
         email: '',
-        pw: ''
+        name: '',
+        pw: '',
+        isSending: false
     };
 
     handleChange = name => event => {
@@ -26,28 +28,41 @@ class NewUser extends Component {
     };
 
     handleSubmit = (event) => {
-        this.props.firebase.createUser({
-            email: this.state.email,
-            password: this.state.pw
-        }, {
-            email: this.state.email,
-            isAdmin: false,
-            positions: {
-
-            }
-        }).then(() => {
-            this.setState({
-                email: '',
-                pw: ''
-            })
-        });
+        if (this.state.email && this.state.pw) {
+            this.setState({ isSending: true }, () => {
+                const newUser = this.props.firebase.functions().httpsCallable('newUser');
+                newUser({
+                    email: this.state.email,
+                    name: this.state.name,
+                    password: this.state.pw,
+                    isAdmin: false,
+                    positions: Object.assign({}, ...this.props.assetsList.map(asset=>({[asset.assetName]: {open: 0, closed: 0}})))
+                }).then((res)=>{
+                    console.log(res);
+                    if (res.data && res.data.success) {
+                        this.setState({
+                            email: '',
+                            name: '',
+                            pw: '',
+                            isSending: false
+                        })
+                    } else {
+                        this.setState({
+                            isSending: false
+                        })
+                    }
+                })
+            });
+        } else {
+            console.log('erro: sem dados necessarios')
+        }
     };
 
     render() {
         const { classes, assetsList } = this.props;
-        const { email, pw } = this.state;
+        const { email, name, pw, isSending } = this.state;
         return (
-            <Paper className={classes.paper}> {console.log(assetsList)}
+            <Paper className={classes.paper}>
                 <CssBaseline/>
                 <Grid
                     container
@@ -66,6 +81,15 @@ class NewUser extends Component {
                         fullWidth={true}
                     />
                     <TextField
+                        label="Nome (Opcional)"
+                        className={classes.textField}
+                        value={name}
+                        onChange={this.handleChange('name')}
+                        margin="normal"
+                        variant="outlined"
+                        fullWidth={true}
+                    />
+                    <TextField
                         label="senha"
                         className={classes.textField}
                         value={pw}
@@ -74,7 +98,7 @@ class NewUser extends Component {
                         variant="outlined"
                         fullWidth={true}
                     />
-                    <Button variant="contained" className={classes.button} onClick={this.handleSubmit}>
+                    <Button variant="contained" className={classes.button} onClick={this.handleSubmit} disabled={isSending}>
                         Enviar
                     </Button>
                 </Grid>

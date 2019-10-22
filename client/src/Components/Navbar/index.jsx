@@ -77,12 +77,8 @@ class Navbar extends Component {
                         >
                             <MenuItem component={Link} to={'/trade/profile'}>Profile</MenuItem>
                             <MenuItem component={Link} to={'/trade'}>Trade</MenuItem>
-                            {profile.isAdmin && (
-                                <>
-                                    <MenuItem component={Link} to={'/admin'}>Ativos</MenuItem>
-                                    <MenuItem component={Link} to={'/admin/users'}>Usuarios</MenuItem>
-                                </>
-                            )}
+                            {profile.isAdmin && <MenuItem component={Link} to={'/admin'}>Ativos</MenuItem>}
+                            {profile.isAdmin && <MenuItem component={Link} to={'/admin/users'}>Usuarios</MenuItem>}
                             <MenuItem onClick={this.handleLogout}>Log Out</MenuItem>
                         </Menu>
                     </div>

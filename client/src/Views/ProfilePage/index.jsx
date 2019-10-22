@@ -30,19 +30,19 @@ class TradePage extends Component {
                     spacing={4}
                     className={classes.container}
                 >
-                    <Grid item xs={3}>
-                        <Grid
-                            container
-                            direction="column"
-                            justify="space-between"
-                            alignItems="center"
-                            className={classes.containerStretch}
-                        >
-                            1
-                            2
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={9}>
+                    {/*<Grid item xs={3}>*/}
+                    {/*    <Grid*/}
+                    {/*        container*/}
+                    {/*        direction="column"*/}
+                    {/*        justify="space-between"*/}
+                    {/*        alignItems="center"*/}
+                    {/*        className={classes.containerStretch}*/}
+                    {/*    >*/}
+                    {/*        1*/}
+                    {/*        2*/}
+                    {/*    </Grid>*/}
+                    {/*</Grid>*/}
+                    <Grid item xs={12}>
                         <SelfAssets/>
                     </Grid>
                 </Grid>

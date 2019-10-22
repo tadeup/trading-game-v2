@@ -5,15 +5,15 @@ import { compose } from 'redux'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, Snackbar, TextField, withStyles} from "@material-ui/core";
+import {Grid, Paper, Snackbar, TextField, Typography, withStyles} from "@material-ui/core";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import MySnackbarContentWrapper from "../CustomizedSnackbars";
 
 export const styles = theme => ({
-    textField: {
-
+    paper: {
+        padding: 12
     }
 });
 
@@ -57,7 +57,7 @@ class NewAsset extends Component {
                 }).then((res)=>{
                     console.log(res);
                     if (res.data && res.data.success) {
-                        this.setState({ name: '', margin: 100, isContinuous: false, isSending: false, snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Oferta Enviada com Sucesso!' })
+                        this.setState({ name: '', margin: 100, isContinuous: false, isSending: false, snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Ativo Enviada com Sucesso!' })
                     } else {
                         this.setState({ name: '', margin: 100, isContinuous: false, isSending: false, snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
                     }
@@ -80,37 +80,47 @@ class NewAsset extends Component {
         const { classes }= this.props;
         const { name, margin, isContinuous, isSending, snackbarMessage, snackbarOpen, snackbarVariant } = this.state;
         return (
-            <Paper>
+            <Paper className={classes.paper}>
                 <CssBaseline/>
-                <TextField
-                    label="Nome do Ativo"
-                    className={classes.textField}
-                    value={name}
-                    onChange={this.handleChange('name')}
-                    margin="normal"
-                    variant="outlined"
-                />
-                <TextField
-                    label="Margem"
-                    className={classes.textField}
-                    value={margin}
-                    onChange={this.handleChangeInt('margin')}
-                    margin="normal"
-                    variant="outlined"
-                />
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={isContinuous}
-                            onChange={this.handleCheck('isContinuous')}
-                            value="checkedA"
-                        />
-                    }
-                    label="Trade Continuo"
-                />
-                <Button variant="contained" className={classes.button} onClick={this.handleSubmit} disabled={isSending}>
-                    Adicionar
-                </Button>
+                <Grid
+                    container
+                    direction="column"
+                    justify="flex-start"
+                    alignItems="center"
+                >
+                    <Typography variant="h5">Novo Ativo</Typography>
+                    <TextField
+                        label="Nome do Ativo"
+                        className={classes.textField}
+                        value={name}
+                        onChange={this.handleChange('name')}
+                        margin="normal"
+                        variant="outlined"
+                        fullWidth={true}
+                    />
+                    <TextField
+                        label="Margem"
+                        className={classes.textField}
+                        value={margin}
+                        onChange={this.handleChangeInt('margin')}
+                        margin="normal"
+                        variant="outlined"
+                        fullWidth={true}
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={isContinuous}
+                                onChange={this.handleCheck('isContinuous')}
+                                value="checkedA"
+                            />
+                        }
+                        label="Trade Continuo"
+                    />
+                    <Button variant="contained" className={classes.button} onClick={this.handleSubmit} disabled={isSending}>
+                        Adicionar
+                    </Button>
+                </Grid>
 
                 <Snackbar
                     anchorOrigin={{

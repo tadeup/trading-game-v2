@@ -9,14 +9,27 @@ import { withStyles } from "@material-ui/core";
 import { styles } from "./styles";
 import NewUser from "../../Components/NewUser";
 import UsersList from "../../Components/UsersList";
+import Grid from "@material-ui/core/Grid";
 
 // STATELESS
 const AdminUsersPage = (props) => {
   return (
     <>
       <CssBaseline/>
-      <NewUser/>
-      <UsersList/>
+        <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="flex-start"
+            spacing={2}
+        >
+            <Grid item xs={2}>
+                <NewUser/>
+            </Grid>
+            <Grid item xs={10}>
+                <UsersList/>
+            </Grid>
+        </Grid>
     </>
   );
 };

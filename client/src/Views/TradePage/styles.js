@@ -3,6 +3,7 @@ export const styles = theme => ({
         height: 675,
     },
     containerStretch: {
-        height: '100%'
+        minHeight: 646,
+        height: '85vh'
     }
 });

@@ -33,12 +33,17 @@ class TradePage extends Component {
                         <Grid
                             container
                             direction="column"
-                            justify="space-between"
+                            justify="flex-start"
                             alignItems="center"
                             className={classes.containerStretch}
                         >
-                            <NewOrder/>
-                            <SelfLastOrders/>
+                            <Grid item style={{marginBottom:18}}>
+                                <NewOrder/>
+                            </Grid>
+                            <Grid item>
+                                <SelfLastOrders/>
+                            </Grid>
+
                         </Grid>
                     </Grid>
                     <Grid item xs={3}>

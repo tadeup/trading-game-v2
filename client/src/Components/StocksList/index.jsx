@@ -10,7 +10,8 @@ import StockListItem from "./StockListItem";
 
 export const styles = theme => ({
     gridList: {
-        height: 646,
+        minHeight: 646,
+        height: '85vh',
         borderBottom: '1px solid rgba(224, 224, 224, 1)'
     },
     itemFirst: {

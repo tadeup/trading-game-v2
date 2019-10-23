@@ -23,7 +23,7 @@ const styles = theme => ({
         }),
         // background: "linear-gradient(175deg, #121212e6 0%, #050505c7 55%)",
         background: 'linear-gradient(175deg, #10111de6 0%, #001c47db 70%)',
-        color: 'rgba(255, 255, 255, 0.89)',
+        color: 'rgba(255, 255, 255, 0.97)',
         paddingLeft: 10
     },
     menuButton: {

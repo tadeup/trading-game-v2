@@ -15,7 +15,8 @@ import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
     paper: {
-        height: 646,
+        minHeight: 646,
+        height: '85vh',
         minWidth: 300,
     },
     priceHeader: {

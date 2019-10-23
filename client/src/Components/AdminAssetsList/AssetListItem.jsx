@@ -72,6 +72,24 @@ class AssetsListItem extends Component {
         });
     };
 
+    handleDelete = asset => event => {
+        const db = this.props.firestore;
+        const batch = db.batch();
+
+        this.props.usersList.forEach(user => {
+            const userRef = db.collection("users").doc(user.id);
+            batch.update(userRef, {['positions.'+asset.assetName]: db.FieldValue.delete()});
+        });
+
+        const assetRef = db.collection("assets").doc(asset.id);
+        batch.delete(assetRef);
+
+        batch.commit()
+            .then(function () {
+                console.log('ok')
+            });
+    };
+
     render() {
         const { classes, assetsList, index, asset } = this.props;
         const { finalPrice, isEditingLocked, dataToDownload } = this.state;
@@ -122,7 +140,7 @@ class AssetsListItem extends Component {
                     <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`${asset.assetName}.csv`}/>
                 </TableCell>
                 <TableCell align="center">
-                    <IconButton color="secondary" className={classes.button} aria-label="add an alarm">
+                    <IconButton color="secondary" className={classes.button} onClick={this.handleDelete(asset)}>
                         <CloseIcon fontSize="small" />
                     </IconButton>
                 </TableCell>
@@ -133,7 +151,7 @@ class AssetsListItem extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        usersList: state.firestore.ordered.usersList || []
     }
 };
 

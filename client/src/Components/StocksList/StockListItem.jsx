@@ -64,6 +64,9 @@ export const styles = theme => ({
     },
     bookLables: {
         color: 'rgb(153, 153, 153)',
+    },
+    textMargin: {
+        marginBottom: 8
     }
 });
 
@@ -90,11 +93,14 @@ const StockListItem = (props) => {
                     <Typography variant="h5">
                         {asset.assetName}
                     </Typography>
-                    <Typography variant="h6" color="textSecondary">
-                        Posição: | {profile.positions[asset.assetName].open} / {profile.positions[asset.assetName].closed} |
+                    <Typography variant="h6" color="textSecondary" className={classes.textMargin}>
+                        Margem: <span style={{marginLeft: 23}}>{asset.assetMargin}</span>
                     </Typography>
-                    <Typography variant="h6" color="textSecondary">
-                        Margem: {asset.assetMargin}
+                    <Typography variant="caption" color="textSecondary">
+                        Posição Aberta: <span style={{marginLeft: 17}}>{profile.positions[asset.assetName].open}</span>
+                    </Typography><br/>
+                    <Typography variant="caption" color="textSecondary">
+                        Posição Fechada: <span style={{marginLeft: 7}}>{profile.positions[asset.assetName].closed}</span>
                     </Typography>
                 </Grid>
                 <Grid item xs={4} className={classes.gridItem}>
@@ -110,7 +116,7 @@ const StockListItem = (props) => {
                                         <TableRow key={index}>
                                             <TableCell align="left" className={clsx(classes.lastPrices, isUp && classes.lastPricesUp, isDown && classes.lastPricesDown)}>{el.price} {isUp ? '↑' : isDown ? '↓' : ''}</TableCell>
                                             <TableCell align="left">{el.quantity}</TableCell>
-                                            <TableCell align="right" className={classes.timestamp}>{moment(el.date.toDate()).format('h:mm:ss')}</TableCell>
+                                            <TableCell align="right" className={classes.timestamp}>{moment(el.date.toDate()).format('hh:mm:ss')}</TableCell>
                                         </TableRow>
                                     )
                                 })

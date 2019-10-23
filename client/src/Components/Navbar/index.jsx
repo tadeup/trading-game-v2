@@ -15,11 +15,23 @@ import {actionTypes} from "redux-firestore";
 import {Link} from "react-router-dom";
 
 const styles = theme => ({
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        // background: "linear-gradient(175deg, #121212e6 0%, #050505c7 55%)",
+        background: 'linear-gradient(175deg, #10111de6 0%, #001c47db 70%)',
+        color: 'rgba(255, 255, 255, 0.89)',
+        paddingLeft: 10
+    },
     menuButton: {
         marginRight: theme.spacing(2),
     },
     title: {
         flexGrow: 1,
+        letterSpacing: '0.2em'
     },
 });
 
@@ -45,7 +57,7 @@ class Navbar extends Component {
         const { anchorEl } = this.state;
 
         return (
-            <AppBar position="static">
+            <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
                         Trading Game

@@ -8,7 +8,7 @@ import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
 import {withStyles} from "@material-ui/core";
 import {styles} from "./styles";
 import Grid from "@material-ui/core/Grid";
-import NewAsset from "../../Components/NewAsset";
+import NewAsset from "../../Components/AdminNewAsset";
 import AssetsList from "../../Components/AdminAssetsList";
 
 // STATELESS

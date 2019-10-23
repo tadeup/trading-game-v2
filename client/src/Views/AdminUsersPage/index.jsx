@@ -7,8 +7,8 @@ import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
 import { withStyles } from "@material-ui/core";
 import { styles } from "./styles";
-import NewUser from "../../Components/NewUser";
-import UsersList from "../../Components/UsersList";
+import NewUser from "../../Components/AdminNewUser";
+import UsersList from "../../Components/AdminUsersList";
 import Grid from "@material-ui/core/Grid";
 
 // STATELESS

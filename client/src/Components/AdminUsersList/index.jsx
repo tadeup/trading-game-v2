@@ -17,6 +17,8 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import { CSVLink } from "react-csv";
+import moment from "moment";
 
 export const styles = theme => ({
     heading: {
@@ -28,30 +30,49 @@ export const styles = theme => ({
         fontSize: theme.typography.pxToRem(15),
         color: theme.palette.text.secondary,
     },
+    idHeading: {
+        marginLeft: 'auto',
+        fontSize: theme.typography.pxToRem(15),
+        color: theme.palette.text.secondary,
+        minWidth: 300
+    }
 });
 
 // STATEFUL
 class UsersList extends Component {
     state = {
+        dataToDownload: []
+    };
 
+    handleDownload = user => event => {
+        const dataToDownload = Object.entries(user.positions).map(position => ({
+            asset: position[0],
+            open: position[1].open,
+            closed: position[1].closed,
+            result: '-'
+        }));
+        this.setState({ dataToDownload }, () => {
+            this.csvLink.link.click()
+        })
     };
 
     render() {
         const { classes, usersList } = this.props;
-        const {  } = this.state;
+        const { dataToDownload } = this.state;
         return (
             <>
                 <CssBaseline/>
 
                 {usersList.map((user, index) => (
-                    <ExpansionPanel key={index}>{console.log(user)}
+                    <ExpansionPanel key={index}>
                         <ExpansionPanelSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1a-content"
                             id="panel1a-header"
                         >
-                            <Typography className={classes.heading}>{user.email}</Typography>
-                            <Typography className={classes.secondaryHeading}>{user.id}</Typography>
+                            <Typography className={classes.heading}>{user.name}</Typography>
+                            <Typography className={classes.secondaryHeading}>{user.email}</Typography>
+                            <Typography className={classes.idHeading}>{user.id}</Typography>
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails>
                             <Table>
@@ -79,7 +100,9 @@ class UsersList extends Component {
                         <Divider />
 
                         <ExpansionPanelActions>
-                            <Button size="small" variant={'outlined'}>Download</Button>
+                            <Button size="small" onClick={this.handleDownload(user)}>Download</Button>
+                            <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`user_${user.name}.csv`}/>
+
                             <Button size="small" color="primary">Editar</Button>
                         </ExpansionPanelActions>
                     </ExpansionPanel>

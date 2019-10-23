@@ -28,7 +28,7 @@ class NewUser extends Component {
     };
 
     handleSubmit = (event) => {
-        if (this.state.email && this.state.pw) {
+        if (this.state.email && this.state.pw && this.state.name) {
             this.setState({ isSending: true }, () => {
                 const newUser = this.props.firebase.functions().httpsCallable('newUser');
                 newUser({
@@ -81,7 +81,7 @@ class NewUser extends Component {
                         fullWidth={true}
                     />
                     <TextField
-                        label="Nome (Opcional)"
+                        label="Nome"
                         className={classes.textField}
                         value={name}
                         onChange={this.handleChange('name')}

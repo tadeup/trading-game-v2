@@ -28,7 +28,7 @@ export const styles = theme => ({
 // STATEFUL
 class AssetsListItem extends Component {
     state = {
-        finalPrice: this.props.asset.assetFinalPrice || '',
+        finalPrice: this.props.asset.hasOwnProperty('assetFinalPrice') ?  this.props.asset.assetFinalPrice : '',
         isEditingLocked: true,
         dataToDownload: []
     };
@@ -39,8 +39,12 @@ class AssetsListItem extends Component {
 
     handleChange = name => event => {
         const x = Number(event.target.value);
-        if (x <= 0) {
+
+        if (event.target.value === '') {
             this.setState({ [name]:  ''});
+        }
+        else if (x <= 0) {
+            this.setState({ [name]:  0});
         }
         else {
             this.setState({ [name]:  x});
@@ -48,12 +52,15 @@ class AssetsListItem extends Component {
     };
 
     handleSetFinalPrice = asset => event => {
-        this.props.firestore.update({ collection: 'assets', doc: asset.id }, {assetIsActive: false, assetFinalPrice: Number(this.state.finalPrice)});
+        if (this.state.finalPrice === '') {
+            this.props.firestore.update({ collection: 'assets', doc: asset.id }, {assetIsActive: false, assetFinalPrice: this.props.firestore.FieldValue.delete()});
+        } else {
+            this.props.firestore.update({ collection: 'assets', doc: asset.id }, {assetIsActive: false, assetFinalPrice: Number(this.state.finalPrice)});
+        }
         this.setState({isEditingLocked: true})
     };
 
     handleEditFinalPrice = event => {
-        // this.props.firestore.update({ collection: 'assets', doc: asset.id }, {assetFinalPrice: this.props.firestore.FieldValue.delete()})
         this.setState({isEditingLocked: false})
     };
 
@@ -115,7 +122,7 @@ class AssetsListItem extends Component {
                     <TextField
                         value={finalPrice}
                         onChange={this.handleChange('finalPrice')}
-                        disabled={isEditingLocked && Boolean(asset.assetFinalPrice)}
+                        disabled={isEditingLocked && asset.hasOwnProperty('assetFinalPrice')}
                         variant="outlined"
                         margin="dense"
                         type="number"
@@ -124,7 +131,7 @@ class AssetsListItem extends Component {
                         }}
                         className={classes.finalPriceField}
                     />
-                    {isEditingLocked && Boolean(asset.assetFinalPrice)
+                    {isEditingLocked && asset.hasOwnProperty('assetFinalPrice')
                         ? (<Button onClick={this.handleEditFinalPrice} className={classes.finalPriceButton}>Editar</Button>)
                         : (<Button onClick={this.handleSetFinalPrice(asset)} className={classes.finalPriceButton}>Salvar</Button>)
                     }

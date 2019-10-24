@@ -35,11 +35,15 @@ class SelfAssets extends Component {
 
         buyer.forEach(transaction => {
             const finalPrice = this.props.assets.filter(el => el.assetName === transaction.asset)[0];
-            positions[transaction.asset] += (transaction.price - (finalPrice ? finalPrice.assetFinalPrice : 0)) * transaction.quantity
+            positions[transaction.asset] += finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
+                ? ( (-transaction.price + finalPrice.assetFinalPrice ) * transaction.quantity )
+                : 0
         });
         seller.forEach(transaction => {
             const finalPrice = this.props.assets.filter(el => el.assetName === transaction.asset)[0];
-            positions[transaction.asset] -= (transaction.price - (finalPrice ? finalPrice.assetFinalPrice : 0)) * transaction.quantity
+            positions[transaction.asset] += finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
+                ? ( (transaction.price - finalPrice.assetFinalPrice ) * transaction.quantity )
+                : 0
         });
 
         return (
@@ -76,7 +80,7 @@ const mapStateToProps = state => {
         profile: state.firebase.profile,
         buyer: state.firestore.ordered.buyer || [],
         seller: state.firestore.ordered.seller || [],
-        assets: state.firestore.ordered.assets || [],
+        assets: state.firestore.ordered.assetsList || [],
     }
 };
 
@@ -105,6 +109,10 @@ export default compose(
                 ],
                 storeAs: 'seller'
             },
+            {
+                collection: 'assets',
+                storeAs: 'assetsList'
+            }
         ]
     }),
 )(SelfAssets)

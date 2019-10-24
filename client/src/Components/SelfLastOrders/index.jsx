@@ -17,7 +17,7 @@ import MySnackbarContentWrapper from "../CustomizedSnackbars";
 export const styles = theme => ({
     main: {
         width: 350,
-        height: 280,
+        height: 304,
         overflow: 'auto',
     },
     tableBody: {
@@ -37,7 +37,7 @@ export const styles = theme => ({
         borderRadius: 2
     },
     offersNotFoundCell: {
-        height: 200,
+        height: 220,
         borderBottom: 'none'
     },
     offersNotFoundText: {

@@ -165,29 +165,25 @@ class NewOrder extends Component {
                         direction="row"
                         justify="space-between"
                         alignItems="center"
-                    >
-                        <Typography variant="subtitle2" gutterBottom>
-                            Mercado:
-                        </Typography>
-                        <Typography variant="overline" gutterBottom>
-                            1111
-                        </Typography>
-                    </Grid>
-                    <Grid
-                        container
-                        direction="row"
-                        justify="space-between"
-                        alignItems="center"
+                        style={{marginBottom: 12}}
                     >
                         <Typography variant="subtitle2" gutterBottom>
                             Ordem Total:
                         </Typography>
                         <Typography variant="overline" gutterBottom>
-                            1111
+                            {quantity * price}
                         </Typography>
                     </Grid>
 
-                    <Button variant="contained" color="primary" className={classes.button} fullWidth={true} onClick={this.handleSubmit} disabled={isSending}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        className={classes.button}
+                        fullWidth={true}
+                        onClick={this.handleSubmit}
+                        disabled={isSending}
+                        type="submit"
+                    >
                         CONFIRMAR ORDEM
                     </Button>
 

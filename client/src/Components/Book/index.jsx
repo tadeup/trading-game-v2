@@ -62,6 +62,27 @@ class Book extends Component {
 
     render() {
         const { classes, buyOffers, sellOffers, selectedAsset, lastPrice } = this.props;
+
+        const sellOffersReduced = [];
+        sellOffers.forEach((el, index)=>{
+            const len = sellOffersReduced.length;
+            if (len && el.offerPrice === sellOffersReduced[len-1].offerPrice) {
+                sellOffersReduced[len-1].offerFilled += el.offerFilled
+            } else {
+                sellOffersReduced.push({...el})
+            }
+        });
+
+        const buyOffersReduced = [];
+        buyOffers.forEach((el, index)=>{
+            const len = buyOffersReduced.length;
+            if (len && el.offerPrice === buyOffersReduced[len-1].offerPrice) {
+                buyOffersReduced[len-1].offerFilled += el.offerFilled
+            } else {
+                buyOffersReduced.push({...el})
+            }
+        });
+
         return (
             <Paper className={classes.paper}>
                 <CssBaseline/>
@@ -85,7 +106,7 @@ class Book extends Component {
                             </Grid>
                         </Grid>
                     </ListItem>
-                    {sellOffers.map((price, key) => (
+                    {sellOffersReduced.map((price, key) => (
                         <ListItem button dense key={key}>
                             <Grid
                                 container
@@ -147,7 +168,7 @@ class Book extends Component {
                             )}
                     </ListItem>
 
-                    {buyOffers.map((price, key) => (
+                    {buyOffersReduced.map((price, key) => (
                         <ListItem button dense key={key}>
                             <Grid
                                 container
@@ -203,7 +224,7 @@ export default compose(
                     ['offerIsBuy', '==', true],
                 ],
                 orderBy: ['offerPrice', 'desc'],
-                limit: 10,
+                limit: 15,
                 storeAs: 'buyOffers'
             },
             {
@@ -215,7 +236,7 @@ export default compose(
                     ['offerIsBuy', '==', false],
                 ],
                 orderBy: ['offerPrice'],
-                limit: 10,
+                limit: 15,
                 storeAs: 'sellOffers'
             }
         ]

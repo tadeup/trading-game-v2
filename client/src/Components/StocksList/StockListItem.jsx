@@ -107,24 +107,21 @@ const StockListItem = (props) => {
                     <Typography className={classes.tableHeader}>Últimas Atividades</Typography>
                     <Table size="small" >
                         <TableBody className={classes.tableActivity}>
-                            {activity.length === 4
-                                ? activity.map((el, index, arr) => {
-                                    if (!arr[index+1]) return null;
-                                    const isUp = el.price > arr[index+1].price;
-                                    const isDown = el.price < arr[index+1].price;
-                                    return (
-                                        <TableRow key={index}>
-                                            <TableCell align="left" className={clsx(classes.lastPrices, isUp && classes.lastPricesUp, isDown && classes.lastPricesDown)}>{el.price} {isUp ? '↑' : isDown ? '↓' : ''}</TableCell>
-                                            <TableCell align="left">{el.quantity}</TableCell>
-                                            <TableCell align="right" className={classes.timestamp}>{moment(el.date.toDate()).format('hh:mm:ss')}</TableCell>
-                                        </TableRow>
-                                    )
-                                })
-                                : (
-                                    <TableRow>
-                                        <TableCell align="left">Histórico Indisponível</TableCell>
-                                    </TableRow>
-                                )}
+                            <TableRow>
+                                <TableCell align="left"/>
+                                <TableCell align="left">Preço</TableCell>
+                                <TableCell align="right">Qtd.</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="left">Sell</TableCell>
+                                <TableCell align="left">1</TableCell>
+                                <TableCell align="right">1</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="left">Buy</TableCell>
+                                <TableCell align="left">1</TableCell>
+                                <TableCell align="right" className={classes.timestamp}>1</TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </Grid>
@@ -184,7 +181,7 @@ export default compose(
                     ['asset', '==', props.asset.assetName],
                 ],
                 orderBy: ['date', 'desc'],
-                limit: 4,
+                limit: 1,
                 storeAs: props.asset.assetName
             },
             {

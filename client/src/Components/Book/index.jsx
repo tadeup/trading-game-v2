@@ -95,14 +95,11 @@ class Book extends Component {
                             alignItems="stretch"
                             className={classes.gridHeader}
                         >
-                            <Grid item xs={4} className={classes.priceHeader}>
+                            <Grid item xs={6} className={classes.priceHeader}>
                                 Preço
                             </Grid>
-                            <Grid item xs={4} className={classes.quantityHeader}>
+                            <Grid item xs={6} className={classes.quantityHeader}>
                                 Quantidade
-                            </Grid>
-                            <Grid item xs={4} className={classes.totalHeader}>
-                                Total
                             </Grid>
                         </Grid>
                     </ListItem>
@@ -114,14 +111,11 @@ class Book extends Component {
                                 justify="space-between"
                                 alignItems="stretch"
                             >
-                                <Grid item xs={4} className={classes.priceSell}>
+                                <Grid item xs={6} className={classes.priceSell}>
                                     {price.offerPrice}
                                 </Grid>
-                                <Grid item xs={4} className={classes.quantity}>
+                                <Grid item xs={6} className={classes.quantity}>
                                     {price.offerFilled}
-                                </Grid>
-                                <Grid item xs={4} className={classes.total}>
-                                    {(price.offerPrice * price.offerFilled).toFixed(2)}
                                 </Grid>
                             </Grid>
                         </ListItem>
@@ -149,17 +143,12 @@ class Book extends Component {
                                     justify="space-between"
                                     alignItems="stretch"
                                 >
-                                    <Grid item xs={4} className={classes.last}>
+                                    <Grid item xs={6} className={classes.last}>
                                         <Typography variant="h6">
                                             -
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={4} className={classes.last}>
-                                        <Typography variant="h6">
-                                            -
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={4} className={classes.last}>
+                                    <Grid item xs={6} className={classes.last}>
                                         <Typography variant="h6">
                                             -
                                         </Typography>
@@ -176,14 +165,11 @@ class Book extends Component {
                                 justify="space-between"
                                 alignItems="stretch"
                             >
-                                <Grid item xs={4} className={classes.priceBuy}>
+                                <Grid item xs={6} className={classes.priceBuy}>
                                     {price.offerPrice}
                                 </Grid>
-                                <Grid item xs={4} className={classes.quantity}>
+                                <Grid item xs={6} className={classes.quantity}>
                                     {price.offerFilled}
-                                </Grid>
-                                <Grid item xs={4} className={classes.total}>
-                                    {(price.offerPrice * price.offerFilled).toFixed(2)}
                                 </Grid>
                             </Grid>
                         </ListItem>

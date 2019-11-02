@@ -5,8 +5,9 @@ import {compose} from 'redux'
 import {firestoreConnect, firebaseConnect} from 'react-redux-firebase'
 import {actionTypes} from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Grid, Paper, TextField, Typography, withStyles} from "@material-ui/core";
+import {Grid, Paper, Snackbar, TextField, Typography, withStyles} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import MySnackbarContentWrapper from "../CustomizedSnackbars";
 
 export const styles = theme => ({
     paper: {
@@ -20,7 +21,10 @@ class NewUser extends Component {
         email: '',
         name: '',
         pw: '',
-        isSending: false
+        isSending: false,
+        snackbarOpen: false,
+        snackbarVariant: 'info',
+        snackbarMessage: ''
     };
 
     handleChange = name => event => {
@@ -29,6 +33,14 @@ class NewUser extends Component {
 
     handleSubmit = (event) => {
         if (this.state.email && this.state.pw && this.state.name) {
+
+            const positions = Object.assign(
+                {},
+                ...this.props.assetsList.map(asset=>({
+                    [asset.assetName]: {open: 0, closed: 0, avgBuyPrice: 0, avgSellPrice: 0, buyQuantity: 0, sellQuantity: 0}
+                }))
+            );
+
             this.setState({ isSending: true }, () => {
                 const newUser = this.props.firebase.functions().httpsCallable('newUser');
                 newUser({
@@ -36,7 +48,7 @@ class NewUser extends Component {
                     name: this.state.name,
                     password: this.state.pw,
                     isAdmin: false,
-                    positions: Object.assign({}, ...this.props.assetsList.map(asset=>({[asset.assetName]: {open: 0, closed: 0}})))
+                    positions: positions
                 }).then((res)=>{
                     console.log(res);
                     if (res.data && res.data.success) {
@@ -44,23 +56,38 @@ class NewUser extends Component {
                             email: '',
                             name: '',
                             pw: '',
-                            isSending: false
+                            isSending: false,
+                            snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Ativo Enviada com Sucesso!'
+                        })
+                    } else if (res.data && res.data.error && res.data.error.errorInfo && res.data.error.errorInfo.message) {
+                        this.setState({
+                            isSending: false,
+                            snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: res.data.error.errorInfo.message
                         })
                     } else {
                         this.setState({
-                            isSending: false
+                            isSending: false,
+                            snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente'
                         })
                     }
                 })
             });
         } else {
-            console.log('erro: sem dados necessarios')
+            this.setState({ snackbarOpen: true, snackbarVariant: 'warning', snackbarMessage: 'Favor preencher todos os dados' })
         }
+    };
+
+    handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({snackbarOpen: false});
     };
 
     render() {
         const { classes, assetsList } = this.props;
-        const { email, name, pw, isSending } = this.state;
+        const { email, name, pw, isSending, snackbarOpen, snackbarMessage, snackbarVariant } = this.state;
         return (
             <Paper className={classes.paper}>
                 <CssBaseline/>
@@ -102,6 +129,22 @@ class NewUser extends Component {
                         Enviar
                     </Button>
                 </Grid>
+
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    autoHideDuration={2000}
+                    onClose={this.handleClose}
+                    open={snackbarOpen}
+                >
+                    <MySnackbarContentWrapper
+                        onClose={this.handleClose}
+                        variant={snackbarVariant}
+                        message={snackbarMessage}
+                    />
+                </Snackbar>
             </Paper>
         );
     }

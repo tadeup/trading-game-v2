@@ -57,9 +57,17 @@ class NewAsset extends Component {
                 }).then((res)=>{
                     console.log(res);
                     if (res.data && res.data.success) {
-                        this.setState({ name: '', margin: 100, isContinuous: false, isSending: false, snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Ativo Enviada com Sucesso!' })
+                        this.setState(
+                            { name: '', margin: 100, isContinuous: false, isSending: false, snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Ativo Enviada com Sucesso!' }
+                        )
+                    } else if (res.data && res.data.error && res.data.error.errorInfo && res.data.error.errorInfo.message) {
+                        this.setState({
+                            isSending: false, snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: res.data.error.errorInfo.message
+                        })
                     } else {
-                        this.setState({ name: '', margin: 100, isContinuous: false, isSending: false, snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
+                        this.setState({
+                            isSending: false, snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente'
+                        })
                     }
                 })
             });

@@ -32,8 +32,8 @@ class SelfAssets extends Component {
         const {  } = this.state;
         const positions = {};
         Object.entries(profile.positions).forEach(asset=>{
-            const avgBuyPrice = asset[1].avgBuyPrice / asset[1].buyQuantity;
-            const avgSellPrice = asset[1].avgSellPrice / asset[1].sellQuantity;
+            const avgBuyPrice = asset[1].buyQuantity ? asset[1].avgBuyPrice / asset[1].buyQuantity : 0;
+            const avgSellPrice = asset[1].sellQuantity ? asset[1].avgSellPrice / asset[1].sellQuantity : 0;
             const finalPrice = this.props.assets.filter(el => el.assetName === asset[0])[0];
             positions[asset[0]] = finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
                 ? ((avgSellPrice - finalPrice.assetFinalPrice) * asset[1].sellQuantity - (avgBuyPrice - finalPrice.assetFinalPrice) * asset[1].buyQuantity).toFixed(2)

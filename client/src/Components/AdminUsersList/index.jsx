@@ -45,12 +45,21 @@ class UsersList extends Component {
     };
 
     handleDownload = user => event => {
-        const dataToDownload = Object.entries(user.positions).map(position => ({
-            asset: position[0],
-            open: position[1].open,
-            closed: position[1].closed,
-            result: '-'
-        }));
+        const dataToDownload = Object.entries(user.positions).map(position => {
+            const avgBuyPrice = position[1].buyQuantity ? position[1].avgBuyPrice / position[1].buyQuantity : 0;
+            const avgSellPrice = position[1].sellQuantity ? position[1].avgSellPrice / position[1].sellQuantity : 0;
+            const finalPrice = this.props.assetsList.filter(el => el.assetName === position[0])[0];
+            const finalPosition = finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
+                ? ((avgSellPrice - finalPrice.assetFinalPrice) * position[1].sellQuantity - (avgBuyPrice - finalPrice.assetFinalPrice) * position[1].buyQuantity).toFixed(2)
+                : 'Indisponível';
+
+            return ({
+                asset: position[0],
+                open: position[1].open,
+                closed: position[1].closed,
+                result: finalPosition
+            })
+        });
         this.setState({ dataToDownload }, () => {
             this.csvLink.link.click()
         })
@@ -85,14 +94,22 @@ class UsersList extends Component {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {Object.entries(user.positions).map((position, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell align="center">{position[0]}</TableCell>
-                                            <TableCell align="center">{position[1].open}</TableCell>
-                                            <TableCell align="center">{position[1].closed}</TableCell>
-                                            <TableCell align="center">---</TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {Object.entries(user.positions).map((position, index) => {
+                                        const avgBuyPrice = position[1].buyQuantity ? position[1].avgBuyPrice / position[1].buyQuantity : 0;
+                                        const avgSellPrice = position[1].sellQuantity ? position[1].avgSellPrice / position[1].sellQuantity : 0;
+                                        const finalPrice = this.props.assetsList.filter(el => el.assetName === position[0])[0];
+                                        const finalPosition = finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
+                                            ? ((avgSellPrice - finalPrice.assetFinalPrice) * position[1].sellQuantity - (avgBuyPrice - finalPrice.assetFinalPrice) * position[1].buyQuantity).toFixed(2)
+                                            : 'Indisponível';
+                                        return (
+                                            <TableRow key={index}>
+                                                <TableCell align="center">{position[0]}</TableCell>
+                                                <TableCell align="center">{position[1].open}</TableCell>
+                                                <TableCell align="center">{position[1].closed}</TableCell>
+                                                <TableCell align="center">{finalPosition}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
                                 </TableBody>
                             </Table>
                         </ExpansionPanelDetails>
@@ -114,7 +131,8 @@ class UsersList extends Component {
 
 const mapStateToProps = state => {
     return {
-        usersList: state.firestore.ordered.usersList || []
+        usersList: state.firestore.ordered.usersList || [],
+        assetsList: state.firestore.ordered.assetsList || []
     }
 };
 

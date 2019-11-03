@@ -75,7 +75,7 @@ class NewOrder extends Component {
     handleSubmit = () => {
         if (this.props.selectedAsset && this.props.selectedAsset.assetName && this.props.selectedAsset.assetMargin && this.state.quantity && this.state.price) {
             this.setState({ isSending: true }, () => {
-                const newOffer = this.props.firebase.functions().httpsCallable('newOffer2');
+                const newOffer = this.props.firebase.functions().httpsCallable('newOffer');
                 newOffer({
                     offerAsset: this.props.selectedAsset.assetName,
                     offerIsBuy: !Boolean(this.state.isBuy),

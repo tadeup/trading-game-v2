@@ -31,19 +31,13 @@ class SelfAssets extends Component {
         const { classes, profile, buyer, seller } = this.props;
         const {  } = this.state;
         const positions = {};
-        Object.keys(profile.positions).forEach(el=>{positions[el]=0});
-
-        buyer.forEach(transaction => {
-            const finalPrice = this.props.assets.filter(el => el.assetName === transaction.asset)[0];
-            positions[transaction.asset] += finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
-                ? ( (-transaction.price + finalPrice.assetFinalPrice ) * transaction.quantity )
-                : 0
-        });
-        seller.forEach(transaction => {
-            const finalPrice = this.props.assets.filter(el => el.assetName === transaction.asset)[0];
-            positions[transaction.asset] += finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
-                ? ( (transaction.price - finalPrice.assetFinalPrice ) * transaction.quantity )
-                : 0
+        Object.entries(profile.positions).forEach(asset=>{
+            const avgBuyPrice = asset[1].avgBuyPrice / asset[1].buyQuantity;
+            const avgSellPrice = asset[1].avgSellPrice / asset[1].sellQuantity;
+            const finalPrice = this.props.assets.filter(el => el.assetName === asset[0])[0];
+            positions[asset[0]] = finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
+                ? ((avgSellPrice - finalPrice.assetFinalPrice) * asset[1].sellQuantity - (avgBuyPrice - finalPrice.assetFinalPrice) * asset[1].buyQuantity).toFixed(2)
+                : 'Indisponível';
         });
 
         return (
@@ -64,7 +58,7 @@ class SelfAssets extends Component {
                                 <TableCell>{asset[0]}</TableCell>
                                 <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].open}</TableCell>
                                 <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].closed}</TableCell>
-                                <TableCell>{asset[1].toFixed(2)}</TableCell>
+                                <TableCell>{asset[1]}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -78,8 +72,6 @@ const mapStateToProps = state => {
     return {
         auth: state.firebase.auth,
         profile: state.firebase.profile,
-        buyer: state.firestore.ordered.buyer || [],
-        seller: state.firestore.ordered.seller || [],
         assets: state.firestore.ordered.assetsList || [],
     }
 };
@@ -95,20 +87,6 @@ export default compose(
     connect(mapStateToProps, mapDispatchToProps),
     firestoreConnect((props) => {
         return [
-            {
-                collection: 'transactions',
-                where: [
-                    ['buyer', '==', props.auth.uid],
-                ],
-                storeAs: 'buyer'
-            },
-            {
-                collection: 'transactions',
-                where: [
-                    ['seller', '==', props.auth.uid],
-                ],
-                storeAs: 'seller'
-            },
             {
                 collection: 'assets',
                 storeAs: 'assetsList'

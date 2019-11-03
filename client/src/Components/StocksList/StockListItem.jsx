@@ -74,6 +74,11 @@ export const styles = theme => ({
 const StockListItem = (props) => {
     const { classes, asset, activity, buyOffers, sellOffers, profile } = props;
 
+    const avgBuyPrice = profile.positions[asset.assetName].avgBuyPrice / (profile.positions[asset.assetName].buyQuantity || 1);
+    const avgSellPrice = profile.positions[asset.assetName].avgSellPrice / (profile.positions[asset.assetName].sellQuantity || 1);
+    const buyQuantity = profile.positions[asset.assetName].buyQuantity;
+    const sellQuantity = profile.positions[asset.assetName].sellQuantity;
+
     const handleClick = asset => event => {
         props.selectAsset(asset)
     };
@@ -90,37 +95,34 @@ const StockListItem = (props) => {
                 className={classes.buttonGridContainer}
             >
                 <Grid item xs={4} className={classes.itemFirst}>
-                    <Typography variant="h5">
+                    <Typography variant="h5" className={classes.textMargin}>
                         {asset.assetName}
                     </Typography>
-                    <Typography variant="h6" color="textSecondary" className={classes.textMargin}>
-                        Margem: <span style={{marginLeft: 23}}>{asset.assetMargin}</span>
+                    <Typography variant="h6" color="textSecondary">
+                        Margem: <span style={{marginLeft: 74}}>{asset.assetMargin}</span>
                     </Typography>
-                    <Typography variant="caption" color="textSecondary">
-                        Posição Aberta: <span style={{marginLeft: 17}}>{profile.positions[asset.assetName].open}</span>
-                    </Typography><br/>
-                    <Typography variant="caption" color="textSecondary">
-                        Posição Fechada: <span style={{marginLeft: 7}}>{profile.positions[asset.assetName].closed}</span>
+                    <Typography variant="h6" color="textSecondary">
+                        Posição Aberta: <span style={{marginLeft: 10}}>{profile.positions[asset.assetName].open}</span>
                     </Typography>
                 </Grid>
                 <Grid item xs={4} className={classes.gridItem}>
-                    <Typography className={classes.tableHeader}>Últimas Atividades</Typography>
+                    <Typography className={classes.tableHeader}>Seus Negócios</Typography>
                     <Table size="small" >
                         <TableBody className={classes.tableActivity}>
                             <TableRow>
-                                <TableCell align="left"/>
-                                <TableCell align="left">Preço</TableCell>
-                                <TableCell align="right">Qtd.</TableCell>
+                                <TableCell align="center"/>
+                                <TableCell align="center">Avg. Price</TableCell>
+                                <TableCell align="center">Qt.</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell align="left">Sell</TableCell>
-                                <TableCell align="left">1</TableCell>
-                                <TableCell align="right">1</TableCell>
+                                <TableCell align="center">Sell</TableCell>
+                                <TableCell align="center">{avgSellPrice.toFixed(2)}</TableCell>
+                                <TableCell align="center">{sellQuantity}</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell align="left">Buy</TableCell>
-                                <TableCell align="left">1</TableCell>
-                                <TableCell align="right" className={classes.timestamp}>1</TableCell>
+                                <TableCell align="center">Buy</TableCell>
+                                <TableCell align="center">{avgBuyPrice.toFixed(2)}</TableCell>
+                                <TableCell align="center">{buyQuantity}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

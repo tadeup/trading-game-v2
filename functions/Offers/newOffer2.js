@@ -156,9 +156,9 @@ module.exports = admin => (data, context) => {
                                     ['positions.'+offerAsset+'.closed']: userUpdate[1].closed,
                                     ['positions.'+offerAsset+'.open']: userUpdate[1].open - userUpdate[1].closed,
                                     ['positions.'+offerAsset+'.avgSellPrice']: userUpdate[1].avgSellPrice,
-                                    ['positions.'+offerAsset+'.avgBuyPrice']: -userUpdate[1].avgBuyPrice,
+                                    ['positions.'+offerAsset+'.avgBuyPrice']: userUpdate[1].avgBuyPrice,
                                     ['positions.'+offerAsset+'.sellQuantity']: userUpdate[1].sellQuantity,
-                                    ['positions.'+offerAsset+'.buyQuantity']: -userUpdate[1].buyQuantity,
+                                    ['positions.'+offerAsset+'.buyQuantity']: userUpdate[1].buyQuantity,
                                 }
                             );
                         });

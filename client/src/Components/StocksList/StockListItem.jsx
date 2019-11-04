@@ -111,7 +111,7 @@ const StockListItem = (props) => {
                         <TableBody className={classes.tableActivity}>
                             <TableRow>
                                 <TableCell align="center"/>
-                                <TableCell align="center">Avg. Price</TableCell>
+                                <TableCell align="center" style={{whiteSpace: 'nowrap'}}>Avg. Price</TableCell>
                                 <TableCell align="center">Qt.</TableCell>
                             </TableRow>
                             <TableRow>
@@ -133,18 +133,18 @@ const StockListItem = (props) => {
                         <TableBody className={classes.tableBook}>
                             <TableRow>
                                 <TableCell className={classes.bookLables}>Sell</TableCell>
-                                <TableCell className={clsx(!sellOffers.isEmpty && classes.lastPricesDown)}>{sellOffers.offerPrice}</TableCell>
-                                <TableCell align="right">{sellOffers.offerFilled}</TableCell>
+                                <TableCell align="center" className={clsx(!sellOffers.isEmpty && classes.lastPricesDown)}>{sellOffers.offerPrice ? '$ '+ sellOffers.offerPrice.toFixed(2) : '-'}</TableCell>
+                                <TableCell align="center">{sellOffers.offerFilled || '-'}</TableCell>
                             </TableRow>
                             <TableRow style={{backgroundColor: 'rgb(247, 247, 247)'}}>
                                 <TableCell className={classes.bookLables}>Last</TableCell>
-                                <TableCell>{activity.length ? activity[0].price : '-'}</TableCell>
-                                <TableCell align="right">{activity.length ? activity[0].quantity : '-'}</TableCell>
+                                <TableCell align="center">{activity.length ? '$' + activity[0].price.toFixed(2) : '-'}</TableCell>
+                                <TableCell align="center">{activity.length ? activity[0].quantity : '-'}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className={classes.bookLables}>Buy</TableCell>
-                                <TableCell className={clsx(!buyOffers.isEmpty && classes.lastPricesUp)}>{buyOffers.offerPrice}</TableCell>
-                                <TableCell align="right">{buyOffers.offerFilled}</TableCell>
+                                <TableCell align="center" className={clsx(!buyOffers.isEmpty && classes.lastPricesUp)}>{buyOffers.offerPrice ? '$ ' + buyOffers.offerPrice.toFixed(2) : '-'}</TableCell>
+                                <TableCell align="center">{buyOffers.offerFilled || '-'}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -161,8 +161,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         selectedAsset: state.stockList.selectedAsset ? state.stockList.selectedAsset.assetName : null,
         activity: state.firestore.ordered[ownProps.asset.assetName] || [],
-        buyOffers: buyOffers && buyOffers[0] ? buyOffers[0] : {offerFilled: '-', offerPrice: '-', isEmpty: true},
-        sellOffers: sellOffers && sellOffers[0] ? sellOffers[0] : {offerFilled: '-', offerPrice: '-', isEmpty: true},
+        buyOffers: buyOffers && buyOffers[0] ? buyOffers[0] : {offerFilled: null, offerPrice: null, isEmpty: true},
+        sellOffers: sellOffers && sellOffers[0] ? sellOffers[0] : {offerFilled: null, offerPrice: null, isEmpty: true},
     }
 };
 

@@ -4,7 +4,7 @@ import { compose } from 'redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { actionTypes } from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, Table, TextField, withStyles} from "@material-ui/core";
+import {CircularProgress, Dialog, Paper, Table, TextField, withStyles} from "@material-ui/core";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
@@ -15,6 +15,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { CSVLink, CSVDownload } from "react-csv";
 import moment from "moment";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
 
 export const styles = theme => ({
     finalPriceField: {
@@ -30,7 +34,9 @@ class AssetsListItem extends Component {
     state = {
         finalPrice: this.props.asset.hasOwnProperty('assetFinalPrice') ?  this.props.asset.assetFinalPrice : '',
         isEditingLocked: true,
-        dataToDownload: []
+        dataToDownload: [],
+        isDeleting: false,
+        isLoading: false
     };
 
     handleActivate = asset => event => {
@@ -80,6 +86,7 @@ class AssetsListItem extends Component {
     };
 
     handleDelete = asset => event => {
+        this.setState({isLoading: true});
         const db = this.props.firestore;
         const batch = db.batch();
 
@@ -92,14 +99,22 @@ class AssetsListItem extends Component {
         batch.delete(assetRef);
 
         batch.commit()
-            .then(function () {
-                console.log('ok')
+            .then(() => {
+                this.setState({isDeleting: false});
             });
+    };
+
+    handleOpen = () => {
+        this.setState({isDeleting: true});
+    };
+
+    handleClose = () => {
+        this.setState({isDeleting: false});
     };
 
     render() {
         const { classes, assetsList, index, asset } = this.props;
-        const { finalPrice, isEditingLocked, dataToDownload } = this.state;
+        const { finalPrice, isEditingLocked, dataToDownload, isDeleting, isLoading } = this.state;
         return (
             <TableRow key={index}>
                 <CssBaseline/>
@@ -136,6 +151,7 @@ class AssetsListItem extends Component {
                         : (<Button onClick={this.handleSetFinalPrice(asset)} className={classes.finalPriceButton}>Salvar</Button>)
                     }
                 </TableCell>
+
                 <TableCell align="center">
                     <IconButton
                         color="primary"
@@ -146,11 +162,33 @@ class AssetsListItem extends Component {
                     </IconButton>
                     <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`${asset.assetName}.csv`}/>
                 </TableCell>
+
                 <TableCell align="center">
-                    <IconButton color="secondary" className={classes.button} onClick={this.handleDelete(asset)}>
+                    <IconButton color="secondary" className={classes.button} onClick={this.handleOpen}>
                         <CloseIcon fontSize="small" />
                     </IconButton>
                 </TableCell>
+
+                <Dialog open={isDeleting} onClose={this.handleClose}>
+                    <DialogTitle id="alert-dialog-title">Cuidado!</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Você está prestes a apagar o ativo {asset.assetName}.
+                            Tal ação é irreversivel e deixará o histórico de preços e posições individuais relativas ao ativo inacessíveis.
+                            Clique em "Apagar" somente se tiver certeza de que está ciente das consequências.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        {isLoading && <CircularProgress/>}
+                        <Button onClick={this.handleClose} color="primary" disabled={isLoading} autoFocus>
+                            Cancelar
+                        </Button>
+                        <Button onClick={this.handleDelete(asset)} color="secondary" disabled={isLoading}>
+                            Apagar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
             </TableRow>
         );
     }

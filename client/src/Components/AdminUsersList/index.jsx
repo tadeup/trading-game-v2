@@ -120,7 +120,7 @@ class UsersList extends Component {
                             <Button size="small" onClick={this.handleDownload(user)}>Download</Button>
                             <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`user_${user.name}.csv`}/>
 
-                            <Button size="small" color="primary">Editar</Button>
+                            <Button size="small" color="primary" disabled={true}>Editar</Button>
                         </ExpansionPanelActions>
                     </ExpansionPanel>
                 ))}

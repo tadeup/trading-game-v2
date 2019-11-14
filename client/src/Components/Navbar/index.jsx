@@ -57,7 +57,7 @@ class Navbar extends Component {
         const { anchorEl } = this.state;
 
         return (
-            <AppBar position="static" className={classes.appBar}>
+            <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
                         Trading Game

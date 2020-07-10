@@ -52,44 +52,29 @@ class SelfLastOrders extends Component {
     state = {
         snackbarOpen: false,
         snackbarVariant: 'info',
-        snackbarMessage: ''
+        snackbarMessage: '',
+        isCanceling: false,
+        cancelSingle: 1,
+        cancelAll: 1,
+        offers: null
     };
 
     handleCancel = offer => () => {
-        const deleteOffers = this.props.firebase.functions().httpsCallable('deleteOffers');
-        deleteOffers({
-            offers: [offer],
-            offerOwnerId: this.props.auth.uid,
-            offerAsset: offer.offerAsset
-        }).then((res)=>{
-            console.log(res);
-            if (res.data && res.data.success) {
-                this.setState({ snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Oferta Cancelada com Sucesso!' })
-            } else {
-                this.setState({ snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
-            }
-        })
+        if (!this.state.isCanceling) {
+            this.setState({isCanceling: true, cancelSingle: this.state.cancelSingle + 1, offers: offer})
+        }
     };
 
     handleCancelAll = offers => () => {
-        if (offers.length) {
-            const offerAsset = offers[0].offerAsset;
-            const deleteOffers = this.props.firebase.functions().httpsCallable('deleteOffers');
-            deleteOffers({
-                offers: offers,
-                offerOwnerId: this.props.auth.uid,
-                offerAsset
-            }).then((res)=>{
-                console.log(res);
-                if (res.data && res.data.success) {
-                    this.setState({ snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Oferta Cancelada com Sucesso!' })
-                } else {
-                    this.setState({ snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente' })
-                }
-            })
-        } else {
-            this.setState({ snackbarOpen: true, snackbarVariant: 'warning', snackbarMessage: 'Nenhuma oferta Encontrada!' })
+        if (!this.state.isCanceling) {
+            if (offers.length) {
+                this.setState({isCanceling: true, cancelAll: this.state.cancelAll + 1, offers: offers})
+            } else {
+                this.setState({ snackbarOpen: true, snackbarVariant: 'warning', snackbarMessage: 'Nenhuma oferta Encontrada!' })
+            }
         }
+
+
     };
 
     handleClose = (event, reason) => {
@@ -102,7 +87,7 @@ class SelfLastOrders extends Component {
 
     render() {
         const { classes, selfOffers, selectedAsset } = this.props;
-        const { snackbarOpen, snackbarMessage, snackbarVariant } = this.state;
+        const { snackbarOpen, snackbarMessage, snackbarVariant, isCanceling } = this.state;
         return (
             <Paper className={classes.main}>
                 <CssBaseline/>
@@ -113,7 +98,11 @@ class SelfLastOrders extends Component {
                             <TableCell align="left">Qtd.</TableCell>
                             <TableCell align="left">Tipo</TableCell>
                             <TableCell align="right">
-                                <Button className={classes.cancelAllButton} color="secondary" onClick={this.handleCancelAll(selfOffers)}>
+                                <Button
+                                    className={classes.cancelAllButton}
+                                    color="secondary"
+                                    onClick={this.handleCancelAll(selfOffers)}
+                                    disabled={isCanceling}>
                                     Cancelar Todos
                                 </Button>
                             </TableCell>
@@ -128,7 +117,7 @@ class SelfLastOrders extends Component {
                                         <TableCell align="left">{offer.offerFilled}</TableCell>
                                         <TableCell align="left">{offer.offerIsBuy ? "compra" : "venda"}</TableCell>
                                         <TableCell align="right">
-                                            <Button className={classes.cancelButton} variant={'outlined'} onClick={this.handleCancel(offer)}>
+                                            <Button className={classes.cancelButton} variant={'outlined'} onClick={this.handleCancel(offer)} disabled={isCanceling}>
                                                 Cancelar
                                             </Button>
                                         </TableCell>
@@ -165,6 +154,68 @@ class SelfLastOrders extends Component {
 
             </Paper>
         );
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.isCanceling !== prevState.isCanceling && this.state.cancelSingle !== prevState.cancelSingle && this.state.offers) {
+            const deleteOffers = this.props.firebase.functions().httpsCallable('deleteOffers');
+            deleteOffers({
+                offers: [this.state.offers],
+                offerOwnerId: this.props.auth.uid,
+                offerAsset: this.state.offers.offerAsset
+            }).then((res)=>{
+                if (res.data && res.data.success) {
+                    this.setState({
+                        snackbarOpen: true,
+                        snackbarVariant: 'success',
+                        snackbarMessage: 'Oferta Cancelada com Sucesso!',
+                        offers: null},
+                        ()=> {
+                        setTimeout(() => {this.setState({isCanceling: false})}, 500)
+                        })
+                } else {
+                    this.setState({
+                        snackbarOpen: true,
+                        snackbarVariant: 'error',
+                        snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente',
+                        offers: null},
+                        ()=> {
+                            setTimeout(() => {this.setState({isCanceling: false})}, 500)
+                        })
+                }
+            });
+        }
+
+        if (this.state.isCanceling !== prevState.isCanceling && this.state.cancelAll !== prevState.cancelAll && this.state.offers) {
+            const offerAsset = this.state.offers[0].offerAsset;
+
+            const deleteOffers = this.props.firebase.functions().httpsCallable('deleteOffers');
+            deleteOffers({
+                offers: this.state.offers,
+                offerOwnerId: this.props.auth.uid,
+                offerAsset
+            }).then((res)=>{
+                if (res.data && res.data.success) {
+                    this.setState({
+                        snackbarOpen: true,
+                        snackbarVariant: 'success',
+                        snackbarMessage: 'Oferta Cancelada com Sucesso!',
+                        offers: null},
+                        ()=> {
+                            setTimeout(() => {this.setState({isCanceling: false})}, 500)
+                        })
+                } else {
+                    this.setState({
+                        snackbarOpen: true,
+                        snackbarVariant: 'error',
+                        snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente',
+                        offers: null},
+                        ()=> {
+                            setTimeout(() => {this.setState({isCanceling: false})}, 500)
+                        })
+                }
+            });
+        }
     }
 }
 

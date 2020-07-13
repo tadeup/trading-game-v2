@@ -6,8 +6,8 @@ module.exports = admin => (data, context) => {
     }
 
     const hasMargin = offerIsBuy
-        ? metaProfile.positions[offerAsset].open + offerQuantity < metaMargin - metaProfile.positions[offerAsset].closed
-        : metaProfile.positions[offerAsset].open - offerQuantity > -metaMargin - metaProfile.positions[offerAsset].closed;
+        ? metaProfile.positions[offerAsset].open + offerQuantity <= metaMargin - metaProfile.positions[offerAsset].closed
+        : metaProfile.positions[offerAsset].open - offerQuantity >= -metaMargin - metaProfile.positions[offerAsset].closed;
 
     if (!metaProfile.isAdmin && !hasMargin) {
         return {success: false, error: 'NO_MARGIN'};

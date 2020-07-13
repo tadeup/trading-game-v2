@@ -1,10 +1,10 @@
 export const styles = theme => ({
     container: {
-        height: 675,
+        minHeight: 700,
         minWidth: 1500
     },
     containerStretch: {
-        minHeight: 646,
+        minHeight: 700,
         height: '85vh'
     }
 });

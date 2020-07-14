@@ -47,7 +47,8 @@ class SelfAssets extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>Ativo</TableCell>
-                            <TableCell>Posição Aberta</TableCell>
+                            <TableCell>Posição Aberta Buy</TableCell>
+                            <TableCell>Posição Aberta Sell</TableCell>
                             <TableCell>Posição Fechada</TableCell>
                             <TableCell>Resultado</TableCell>
                         </TableRow>
@@ -56,7 +57,8 @@ class SelfAssets extends Component {
                         {Object.entries(positions).map((asset, key) => (
                             <TableRow key={key}>
                                 <TableCell>{asset[0]}</TableCell>
-                                <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].open}</TableCell>
+                                <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].openBuy}</TableCell>
+                                <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].openSell}</TableCell>
                                 <TableCell>{profile.positions[asset[0]] && profile.positions[asset[0]].closed}</TableCell>
                                 <TableCell>{asset[1]}</TableCell>
                             </TableRow>

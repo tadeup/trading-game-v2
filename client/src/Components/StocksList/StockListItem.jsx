@@ -100,10 +100,14 @@ const StockListItem = (props) => {
                         {asset.assetName}
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
-                        Margem: <span style={{marginLeft: 74}}>{asset.assetMargin}</span>
+                        Margem: <span style={{float:"right", marginRight:48}}>{asset.assetMargin}</span>
                     </Typography>
                     <Typography variant="h6" color="textSecondary">
-                        Posição Aberta: <span style={{marginLeft: 10}}>{profile.positions[asset.assetName].open}</span>
+                        P. Aberta:
+                        <span style={{float:"right", marginRight:20}}>
+                            |<span style={{color: 'rgba(112,168,0,0.5)'}}>B:{profile.positions[asset.assetName].openBuy}</span>|
+                            <span style={{color: 'rgba(234,0,112,0.5)'}}>S:{profile.positions[asset.assetName].openSell}</span>|
+                        </span>
                     </Typography>
                 </Grid>
                 <Grid item xs={4} className={classes.gridItem}>

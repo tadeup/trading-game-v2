@@ -2,12 +2,22 @@ module.exports = admin => (data, context) => {
     const {offers, offerOwnerId, offerAsset} = data;
     const db = admin.firestore();
     const batch = db.batch();
-    let margin = 0;
+    let marginBuy = 0;
+    let marginSell = 0;
     offers.forEach(offer => {
         batch.update(db.collection('offers').doc(offer.id), {offerIsCanceled: true});
-        margin += offer.offerIsBuy ? -offer.offerFilled : offer.offerFilled
+        if (offer.offerIsBuy) {
+            marginBuy += -offer.offerFilled
+        } else {
+            marginSell += -offer.offerFilled
+        }
     });
-    batch.update(db.collection('users').doc(offerOwnerId), {['positions.'+offerAsset+'.open']: admin.firestore.FieldValue.increment(margin)});
+    batch.update(
+      db.collection('users').doc(offerOwnerId), {
+          ['positions.'+offerAsset+'.openBuy']: admin.firestore.FieldValue.increment(marginBuy),
+          ['positions.'+offerAsset+'.openSell']: admin.firestore.FieldValue.increment(marginSell)
+      }
+    );
 
     return batch.commit()
         .then(result => {

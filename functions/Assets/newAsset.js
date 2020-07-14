@@ -23,7 +23,7 @@ module.exports = (admin) => (data, context) => {
 
             let batch = db.batch();
             refArray.forEach(ref => {
-                batch.update(ref.ref, {['positions.'+assetName]: {open: 0, closed: 0, avgBuyPrice: 0, avgSellPrice: 0, buyQuantity: 0, sellQuantity: 0}});
+                batch.update(ref.ref, {['positions.'+assetName]: {openBuy: 0, openSell: 0, closed: 0, avgBuyPrice: 0, avgSellPrice: 0, buyQuantity: 0, sellQuantity: 0}});
             });
             return batch.commit()
         })

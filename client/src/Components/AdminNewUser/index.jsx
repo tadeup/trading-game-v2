@@ -37,7 +37,7 @@ class NewUser extends Component {
             const positions = Object.assign(
                 {},
                 ...this.props.assetsList.map(asset=>({
-                    [asset.assetName]: {open: 0, closed: 0, avgBuyPrice: 0, avgSellPrice: 0, buyQuantity: 0, sellQuantity: 0}
+                    [asset.assetName]: {openBuy: 0, openSell: 0, closed: 0, avgBuyPrice: 0, avgSellPrice: 0, buyQuantity: 0, sellQuantity: 0}
                 }))
             );
 

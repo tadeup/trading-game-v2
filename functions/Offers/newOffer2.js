@@ -6,8 +6,8 @@ module.exports = admin => (data, context) => {
     }
 
     const hasMargin = offerIsBuy
-        ? metaProfile.positions[offerAsset].open + offerQuantity <= metaMargin - metaProfile.positions[offerAsset].closed
-        : metaProfile.positions[offerAsset].open - offerQuantity >= -metaMargin - metaProfile.positions[offerAsset].closed;
+        ? metaProfile.positions[offerAsset].openBuy + offerQuantity <= metaMargin - metaProfile.positions[offerAsset].closed
+        : metaProfile.positions[offerAsset].openSell + offerQuantity <= metaMargin + metaProfile.positions[offerAsset].closed;
 
     if (!metaProfile.isAdmin && !hasMargin) {
         return {success: false, error: 'NO_MARGIN'};
@@ -37,11 +37,10 @@ module.exports = admin => (data, context) => {
 
     const setOffer = docRef.set(offerDoc);
 
-    const setUserOpenMargin = userRef.update({
-        ['positions.'+offerAsset+'.open']: offerIsBuy
-            ? admin.firestore.FieldValue.increment(offerQuantity)
-            : admin.firestore.FieldValue.increment(-offerQuantity)
-    });
+    const setUserOpenMargin = userRef.update(offerIsBuy
+      ? { ['positions.'+offerAsset+'.openBuy']: admin.firestore.FieldValue.increment(offerQuantity) }
+      : { ['positions.'+offerAsset+'.openSell']: admin.firestore.FieldValue.increment(offerQuantity) }
+    );
 
     const getOffers = db.collection('offers')
         .where('offerAsset', '==', offerAsset)
@@ -90,19 +89,21 @@ module.exports = admin => (data, context) => {
                                 if (newFilledSelf > newFilledOther) {
                                     t.set(newTransactionRef, {buyer: offerIsBuy ? offerDoc.offerOwnerId : ref.data().offerOwnerId, seller: offerIsBuy ? ref.data().offerOwnerId : offerDoc.offerOwnerId, asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                     usersPositionUpdate[offerOwnerId].closed += offerIsBuy ? newFilledOther : -newFilledOther;
-                                    usersPositionUpdate[offerOwnerId].open += offerIsBuy ? -newFilledOther : newFilledOther;
                                     usersPositionUpdate[userOther].closed += offerIsBuy ? -newFilledOther : newFilledOther;
-                                    usersPositionUpdate[userOther].open += offerIsBuy ? newFilledOther : -newFilledOther;
                                     if (offerIsBuy) {
                                         usersPositionUpdate[offerOwnerId].buyQuantity += newFilledOther;
                                         usersPositionUpdate[offerOwnerId].avgBuyPrice += newFilledOther * ref.data().offerPrice;
                                         usersPositionUpdate[userOther].sellQuantity += newFilledOther;
                                         usersPositionUpdate[userOther].avgSellPrice += newFilledOther * ref.data().offerPrice;
+                                        usersPositionUpdate[offerOwnerId].openBuy += -newFilledOther;
+                                        usersPositionUpdate[userOther].openSell += -newFilledOther;
                                     } else {
                                         usersPositionUpdate[userOther].buyQuantity += newFilledOther;
                                         usersPositionUpdate[userOther].avgBuyPrice += newFilledOther * ref.data().offerPrice;
                                         usersPositionUpdate[offerOwnerId].sellQuantity += newFilledOther;
                                         usersPositionUpdate[offerOwnerId].avgSellPrice += newFilledOther * ref.data().offerPrice;
+                                        usersPositionUpdate[offerOwnerId].openSell += -newFilledOther;
+                                        usersPositionUpdate[userOther].openBuy += -newFilledOther;
                                     }
                                     newFilledSelf = newFilledSelf - newFilledOther;
                                     newFilledOther = 0;
@@ -111,19 +112,21 @@ module.exports = admin => (data, context) => {
                                 } else if (newFilledSelf === newFilledOther) {
                                     t.set(newTransactionRef, {buyer: offerIsBuy ? offerDoc.offerOwnerId : ref.data().offerOwnerId, seller: offerIsBuy ? ref.data().offerOwnerId : offerDoc.offerOwnerId, asset: offerAsset, quantity: newFilledOther, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                     usersPositionUpdate[offerOwnerId].closed += offerIsBuy ? newFilledOther : -newFilledOther;
-                                    usersPositionUpdate[offerOwnerId].open += offerIsBuy ? -newFilledOther : newFilledOther;
                                     usersPositionUpdate[userOther].closed += offerIsBuy ? -newFilledOther : newFilledOther;
-                                    usersPositionUpdate[userOther].open += offerIsBuy ? newFilledOther : -newFilledOther;
                                     if (offerIsBuy) {
                                         usersPositionUpdate[offerOwnerId].buyQuantity += newFilledOther;
                                         usersPositionUpdate[offerOwnerId].avgBuyPrice += newFilledOther * ref.data().offerPrice;
                                         usersPositionUpdate[userOther].sellQuantity += newFilledOther;
                                         usersPositionUpdate[userOther].avgSellPrice += newFilledOther * ref.data().offerPrice;
+                                        usersPositionUpdate[offerOwnerId].openBuy += -newFilledOther;
+                                        usersPositionUpdate[userOther].openSell += -newFilledOther;
                                     } else {
                                         usersPositionUpdate[userOther].buyQuantity += newFilledOther;
                                         usersPositionUpdate[userOther].avgBuyPrice += newFilledOther * ref.data().offerPrice;
                                         usersPositionUpdate[offerOwnerId].sellQuantity += newFilledOther;
                                         usersPositionUpdate[offerOwnerId].avgSellPrice += newFilledOther * ref.data().offerPrice;
+                                        usersPositionUpdate[offerOwnerId].openSell += -newFilledOther;
+                                        usersPositionUpdate[userOther].openBuy += -newFilledOther;
                                     }
                                     newFilledOther = 0;
                                     newFilledSelf = 0;
@@ -133,20 +136,22 @@ module.exports = admin => (data, context) => {
                                 } else {
                                     t.set(newTransactionRef, {buyer: offerIsBuy ? offerDoc.offerOwnerId : ref.data().offerOwnerId, seller: offerIsBuy ? ref.data().offerOwnerId : offerDoc.offerOwnerId, asset: offerAsset, quantity: newFilledSelf, price: ref.data().offerPrice, date: admin.firestore.FieldValue.serverTimestamp()});
                                     usersPositionUpdate[offerOwnerId].closed += offerIsBuy ? newFilledSelf : -newFilledSelf;
-                                    usersPositionUpdate[offerOwnerId].open += offerIsBuy ? -newFilledSelf : newFilledSelf;
                                     usersPositionUpdate[userOther].closed += offerIsBuy ? -newFilledSelf : newFilledSelf;
-                                    usersPositionUpdate[userOther].open += offerIsBuy ? newFilledSelf : -newFilledSelf;
                                     newFilledOther = newFilledOther - newFilledSelf;
                                     if (offerIsBuy) {
                                         usersPositionUpdate[offerOwnerId].buyQuantity += newFilledSelf;
                                         usersPositionUpdate[offerOwnerId].avgBuyPrice += newFilledSelf * ref.data().offerPrice;
                                         usersPositionUpdate[userOther].sellQuantity += newFilledSelf;
                                         usersPositionUpdate[userOther].avgSellPrice += newFilledSelf * ref.data().offerPrice;
+                                        usersPositionUpdate[offerOwnerId].openBuy += -newFilledSelf;
+                                        usersPositionUpdate[userOther].openSell += -newFilledSelf;
                                     } else {
                                         usersPositionUpdate[userOther].buyQuantity += newFilledSelf;
                                         usersPositionUpdate[userOther].avgBuyPrice += newFilledSelf * ref.data().offerPrice;
                                         usersPositionUpdate[offerOwnerId].sellQuantity += newFilledSelf;
                                         usersPositionUpdate[offerOwnerId].avgSellPrice += newFilledSelf * ref.data().offerPrice;
+                                        usersPositionUpdate[offerOwnerId].openSell += -newFilledSelf;
+                                        usersPositionUpdate[userOther].openBuy += -newFilledSelf;
                                     }
                                     newFilledSelf = 0;
                                     newIsFilledSelf = true;
@@ -160,7 +165,8 @@ module.exports = admin => (data, context) => {
                                 db.collection('users').doc(userUpdate[0]),
                                 {
                                     ['positions.'+offerAsset+'.closed']: userUpdate[1].closed,
-                                    ['positions.'+offerAsset+'.open']: userUpdate[1].open,
+                                    ['positions.'+offerAsset+'.openBuy']: userUpdate[1].openBuy,
+                                    ['positions.'+offerAsset+'.openSell']: userUpdate[1].openSell,
                                     ['positions.'+offerAsset+'.avgSellPrice']: userUpdate[1].avgSellPrice,
                                     ['positions.'+offerAsset+'.avgBuyPrice']: userUpdate[1].avgBuyPrice,
                                     ['positions.'+offerAsset+'.sellQuantity']: userUpdate[1].sellQuantity,

@@ -55,7 +55,8 @@ class UsersList extends Component {
 
             return ({
                 asset: position[0],
-                open: position[1].open,
+                openBuy: position[1].openBuy,
+                openSell: position[1].openSell,
                 closed: position[1].closed,
                 result: finalPosition
             })
@@ -88,7 +89,8 @@ class UsersList extends Component {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="center">Ativo</TableCell>
-                                        <TableCell align="center">Posição Aberta</TableCell>
+                                        <TableCell align="center">Posição Aberta Buy</TableCell>
+                                        <TableCell align="center">Posição Aberta Sell</TableCell>
                                         <TableCell align="center">Posição Fechada</TableCell>
                                         <TableCell align="center">Resultado</TableCell>
                                     </TableRow>
@@ -104,7 +106,8 @@ class UsersList extends Component {
                                         return (
                                             <TableRow key={index}>
                                                 <TableCell align="center">{position[0]}</TableCell>
-                                                <TableCell align="center">{position[1].open}</TableCell>
+                                                <TableCell align="center">{position[1].openBuy}</TableCell>
+                                                <TableCell align="center">{position[1].openSell}</TableCell>
                                                 <TableCell align="center">{position[1].closed}</TableCell>
                                                 <TableCell align="center">{finalPosition}</TableCell>
                                             </TableRow>

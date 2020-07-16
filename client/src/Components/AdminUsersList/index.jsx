@@ -66,12 +66,28 @@ class UsersList extends Component {
         })
     };
 
+    handleDownloadUsers = usersList => event => {
+        const dataToDownload = usersList.map(user => {
+            return ({
+                ID: user.id,
+                name: user.name,
+            })
+        });
+        this.setState({ dataToDownload }, () => {
+            this.csvLinkAllUsers.link.click()
+        })
+    };
+
     render() {
         const { classes, usersList } = this.props;
         const { dataToDownload } = this.state;
         return (
             <>
                 <CssBaseline/>
+                <CSVLink data={dataToDownload} ref={(r) => this.csvLinkAllUsers = r} filename={`users_list.csv`}/>
+                <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`user_data.csv`}/>
+
+                <Button style={{marginBottom:15}} variant="outlined" fullWidth onClick={this.handleDownloadUsers(usersList)}>Baixar lista e usuários</Button>
 
                 {usersList.map((user, index) => (
                     <ExpansionPanel key={index}>
@@ -121,7 +137,7 @@ class UsersList extends Component {
 
                         <ExpansionPanelActions>
                             <Button size="small" onClick={this.handleDownload(user)}>Download</Button>
-                            <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`user_${user.name}.csv`}/>
+                            {/*<CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`user_${user.name}.csv`}/>*/}
 
                             <Button size="small" color="primary" disabled={true}>Editar</Button>
                         </ExpansionPanelActions>

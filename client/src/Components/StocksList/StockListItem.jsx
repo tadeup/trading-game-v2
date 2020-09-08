@@ -75,6 +75,10 @@ export const styles = theme => ({
 const StockListItem = (props) => {
     const { classes, asset, activity, buyOffers, sellOffers, profile } = props;
 
+    if (!profile.positions[asset.assetName]) {
+        return null
+    }
+
     const avgBuyPrice = profile.positions[asset.assetName].avgBuyPrice / (profile.positions[asset.assetName].buyQuantity || 1);
     const avgSellPrice = profile.positions[asset.assetName].avgSellPrice / (profile.positions[asset.assetName].sellQuantity || 1);
     const buyQuantity = profile.positions[asset.assetName].buyQuantity;

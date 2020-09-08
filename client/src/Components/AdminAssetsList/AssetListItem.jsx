@@ -78,7 +78,7 @@ class AssetsListItem extends Component {
             ],
             orderBy: ['date', 'desc']
         }).then(data=> {
-            const dataToDownload = data.docs.map(doc => ({...doc.data(), date: moment(doc.data().date.toDate()).format('hh:mm:ss')}));
+            const dataToDownload = data.docs.map(doc => ({...doc.data(), date: moment(doc.data().date.toDate()).format('DD-MM-YYYY hh:mm:ss')}));
             this.setState({ dataToDownload }, () => {
                 this.csvLink.link.click()
             })

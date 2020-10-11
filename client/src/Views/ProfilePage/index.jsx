@@ -12,6 +12,7 @@ import StocksList from "../../Components/StocksList";
 import Grid from "@material-ui/core/Grid";
 import SelfLastOrders from "../../Components/SelfLastOrders";
 import SelfAssets from "../../Components/SelfAssets";
+import SelfSettings from "../../Components/SelfSettings";
 
 // STATEFUL
 class TradePage extends Component {
@@ -30,21 +31,12 @@ class TradePage extends Component {
                     spacing={4}
                     className={classes.container}
                 >
-                    {/*<Grid item xs={3}>*/}
-                    {/*    <Grid*/}
-                    {/*        container*/}
-                    {/*        direction="column"*/}
-                    {/*        justify="space-between"*/}
-                    {/*        alignItems="center"*/}
-                    {/*        className={classes.containerStretch}*/}
-                    {/*    >*/}
-                    {/*        1*/}
-                    {/*        2*/}
-                    {/*    </Grid>*/}
-                    {/*</Grid>*/}
-                    <Grid item xs={12}>
-                        <SelfAssets/>
-                    </Grid>
+                  <Grid item xs={12}>
+                      <SelfAssets/>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <SelfSettings />
+                  </Grid>
                 </Grid>
             </>
         );

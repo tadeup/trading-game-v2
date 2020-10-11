@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import { connect } from 'react-redux'
-import { compose } from 'redux'
-import { firestoreConnect } from 'react-redux-firebase'
-import { actionTypes } from "redux-firestore";
+import {connect} from 'react-redux'
+import {compose} from 'redux'
+import {firestoreConnect} from 'react-redux-firebase'
+import {actionTypes} from "redux-firestore";
 import CssBaseline from "@material-ui/core/es/CssBaseline/CssBaseline";
-import {Paper, Table, TextField, withStyles} from "@material-ui/core";
+import {Table, withStyles} from "@material-ui/core";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
@@ -17,8 +17,7 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import { CSVLink } from "react-csv";
-import moment from "moment";
+import {CSVLink} from "react-csv";
 
 export const styles = theme => ({
     heading: {
@@ -78,6 +77,34 @@ class UsersList extends Component {
         })
     };
 
+    handleDownloadResults = usersList => event => {
+        const dataToDownload = usersList.map(user => {
+
+            const userData = {
+                ID: user.id,
+                name: user.name,
+            };
+
+            Object.entries(user.positions).forEach(position => {
+                const avgBuyPrice = position[1].buyQuantity ? position[1].avgBuyPrice / position[1].buyQuantity : 0;
+                const avgSellPrice = position[1].sellQuantity ? position[1].avgSellPrice / position[1].sellQuantity : 0;
+                const finalPrice = this.props.assetsList.filter(el => el.assetName === position[0])[0];
+
+                userData[`${position[0]}_result`] = finalPrice && finalPrice.hasOwnProperty('assetFinalPrice')
+                  ? ((avgSellPrice - finalPrice.assetFinalPrice) * position[1].sellQuantity - (avgBuyPrice - finalPrice.assetFinalPrice) * position[1].buyQuantity).toFixed(2)
+                  : 'Indisponível';
+                userData[`${position[0]}_open_buy`] = position[1].openBuy
+                userData[`${position[0]}_open_sell`] = position[1].openSell
+                userData[`${position[0]}_closed`] = position[1].closed
+            });
+
+            return userData;
+        });
+        this.setState({ dataToDownload }, () => {
+            this.csvLinkResults.link.click()
+        })
+    };
+
     render() {
         const { classes, usersList } = this.props;
         const { dataToDownload } = this.state;
@@ -85,9 +112,11 @@ class UsersList extends Component {
             <>
                 <CssBaseline/>
                 <CSVLink data={dataToDownload} ref={(r) => this.csvLinkAllUsers = r} filename={`users_list.csv`}/>
+                <CSVLink data={dataToDownload} ref={(r) => this.csvLinkResults = r} filename={`results_data.csv`}/>
                 <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`user_data.csv`}/>
 
-                <Button style={{marginBottom:15}} variant="outlined" fullWidth onClick={this.handleDownloadUsers(usersList)}>Baixar lista e usuários</Button>
+                <Button style={{marginBottom:6}} variant="outlined" fullWidth onClick={this.handleDownloadUsers(usersList)}>Baixar lista de usuários</Button>
+                <Button style={{marginBottom:16}} variant="outlined" fullWidth onClick={this.handleDownloadResults(usersList)}>Baixar lista de resultados</Button>
 
                 {usersList.map((user, index) => (
                     <ExpansionPanel key={index}>

@@ -69,7 +69,7 @@ class LoginPage extends Component {
                                 Trading Game
                             </Typography>
                             <Typography variant="h6" gutterBottom>
-                                subtitulo vai aqui
+                                Princípios de Finanças
                             </Typography>
                             <TextField
                                 id="outlined-email-input"

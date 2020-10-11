@@ -53,14 +53,14 @@ class NewOrder extends Component {
     };
 
     handleChangeFloat = name => event => {
-        const x = Number(event.target.value);
+        const x = Number(event.target.value.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join("."));
         if (x <= 0) {
             this.setState({ [name]:  ''});
         }
         else {
             this.setState({ [name]:  x});
         }
-
+console.log(x)
         // if (event.target.value) {
         //     this.setState({ [name]: parseFloat(event.target.value) });
         // } else {

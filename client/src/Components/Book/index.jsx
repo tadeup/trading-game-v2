@@ -210,7 +210,7 @@ export default compose(
                     ['offerIsBuy', '==', true],
                 ],
                 orderBy: ['offerPrice', 'desc'],
-                limit: 15,
+                limit: 10,
                 storeAs: 'buyOffers'
             },
             {
@@ -222,7 +222,7 @@ export default compose(
                     ['offerIsBuy', '==', false],
                 ],
                 orderBy: ['offerPrice'],
-                limit: 15,
+                limit: 10,
                 storeAs: 'sellOffers'
             }
         ]

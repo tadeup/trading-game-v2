@@ -60,12 +60,6 @@ class NewOrder extends Component {
         else {
             this.setState({ [name]:  x});
         }
-console.log(x)
-        // if (event.target.value) {
-        //     this.setState({ [name]: parseFloat(event.target.value) });
-        // } else {
-        //     this.setState({ [name]: '' });
-        // }
     };
 
     handleTab = name => (event, newValue) => {

@@ -31,7 +31,7 @@ class SelfSettings extends Component {
   handleSubmit = (event) => {
     this.setState({isSending: true})
     this.props.firebase.auth().languageCode = 'pt-br'
-    this.props.firebase.auth().sendPasswordResetEmail('tadeup1@gmail.com').then(res => {
+    this.props.firebase.auth().sendPasswordResetEmail(this.props.profile.email).then(res => {
       this.setState({isSending: false, snackbarOpen: true, snackbarVariant: 'success', snackbarMessage: 'Enviado com sucesso! Favor checar seu e-mail'})
     }).catch(e => {
       this.setState({isSending: false, snackbarOpen: true, snackbarVariant: 'error', snackbarMessage: 'Ops! Algo Deu Errado, Tente Novamente'})
@@ -78,7 +78,8 @@ class SelfSettings extends Component {
 
 const mapStateToProps = state => {
   return {
-    assetsList: state.firestore.ordered.assetsList || []
+    assetsList: state.firestore.ordered.assetsList || [],
+    profile: state.firebase.profile
   }
 };
 

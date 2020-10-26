@@ -10,6 +10,7 @@ import { styles } from "./styles";
 import NewUser from "../../Components/AdminNewUser";
 import UsersList from "../../Components/AdminUsersList";
 import Grid from "@material-ui/core/Grid";
+import NewUsersTable from "../../Components/AdminNewUsersTable";
 
 // STATELESS
 const AdminUsersPage = (props) => {
@@ -23,12 +24,15 @@ const AdminUsersPage = (props) => {
             alignItems="flex-start"
             spacing={2}
         >
-            <Grid item xs={2}>
-                <NewUser/>
-            </Grid>
-            <Grid item xs={10}>
-                <UsersList/>
-            </Grid>
+          <Grid item xs={2}>
+              <NewUser/>
+          </Grid>
+          <Grid item xs={10}>
+              <UsersList/>
+          </Grid>
+          <Grid item xs={12}>
+            <NewUsersTable />
+          </Grid>
         </Grid>
     </>
   );

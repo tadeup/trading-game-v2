@@ -12,11 +12,12 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Grid from "@material-ui/core/Grid";
+import clsx from "clsx";
 
 const styles = theme => ({
     paper: {
-        minHeight: 646,
-        height: '85vh',
+        height: 646,
+        // height: '85vh',
         minWidth: 300,
     },
     priceHeader: {
@@ -54,7 +55,16 @@ const styles = theme => ({
     last: {
         textAlign: 'center',
         color: 'rgb(153, 153, 153)',
-    }
+    },
+    sellOffersList: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: 270,
+        borderTop: '1px solid #e8e8e8'
+    },
+    sellOffersFirstChild: {
+        marginTop: 'auto'
+    },
 });
 
 class Book extends Component {
@@ -63,7 +73,7 @@ class Book extends Component {
     render() {
         const { classes, buyOffers, sellOffers, selectedAsset, lastPrice } = this.props;
 
-        const sellOffersReduced = [];
+        let sellOffersReduced = [];
         sellOffers.forEach((el, index)=>{
             const len = sellOffersReduced.length;
             if (len && el.offerPrice === sellOffersReduced[len-1].offerPrice) {
@@ -72,11 +82,14 @@ class Book extends Component {
                 sellOffersReduced.push({...el})
             }
         });
+        sellOffersReduced=sellOffersReduced.slice(Math.max(sellOffersReduced.length - 9, 1))
 
         const buyOffersReduced = [];
         buyOffers.forEach((el, index)=>{
             const len = buyOffersReduced.length;
-            if (len && el.offerPrice === buyOffersReduced[len-1].offerPrice) {
+            if (len && len >= 9) {
+                return
+            } if (len && el.offerPrice === buyOffersReduced[len-1].offerPrice) {
                 buyOffersReduced[len-1].offerFilled += el.offerFilled
             } else {
                 buyOffersReduced.push({...el})
@@ -103,8 +116,10 @@ class Book extends Component {
                             </Grid>
                         </Grid>
                     </ListItem>
+                </List>
+                <List className={classes.sellOffersList}>
                     {sellOffersReduced.map((price, key) => (
-                        <ListItem button dense key={key}>
+                        <ListItem button dense key={key} className={clsx({[classes.sellOffersFirstChild]: key===0})}>
                             <Grid
                                 container
                                 direction="row"
@@ -120,7 +135,8 @@ class Book extends Component {
                             </Grid>
                         </ListItem>
                     ))}
-
+                </List>
+                <List>
                     <ListItem className={classes.priceCentral} dense>
                         {lastPrice.price && lastPrice.quantity
                             ? (
@@ -156,7 +172,8 @@ class Book extends Component {
                                 </Grid>
                             )}
                     </ListItem>
-
+                </List>
+                <List style={{height:270}}>
                     {buyOffersReduced.map((price, key) => (
                         <ListItem button dense key={key}>
                             <Grid
@@ -210,7 +227,7 @@ export default compose(
                     ['offerIsBuy', '==', true],
                 ],
                 orderBy: ['offerPrice', 'desc'],
-                limit: 10,
+                limit: 30,
                 storeAs: 'buyOffers'
             },
             {
@@ -222,7 +239,7 @@ export default compose(
                     ['offerIsBuy', '==', false],
                 ],
                 orderBy: ['offerPrice'],
-                limit: 10,
+                limit: 30,
                 storeAs: 'sellOffers'
             }
         ]

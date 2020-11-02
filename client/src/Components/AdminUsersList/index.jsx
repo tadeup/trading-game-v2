@@ -105,6 +105,42 @@ class UsersList extends Component {
         })
     };
 
+    handleDownloadVolume = usersList => event => {
+        const dataToDownload = usersList.map(user => {
+
+            const userData = {
+                ID: user.id,
+                name: user.name,
+            };
+
+            Object.entries(user.positions).forEach(position => {
+                userData[position[0]] = position[1].buyQuantity + position[1].sellQuantity
+            })
+
+            return this.props.firestore.get({
+                collection: 'transactions',
+                where: [
+                    ['buyer', '==', user.id],
+                    ['seller', '==', user.id],
+                ],
+            })
+              .then(data=> {
+                  data.docs.forEach(doc=> {
+                      const data = doc.data()
+                      userData[data['asset']] -= 2 * data['quantity']
+                  });
+
+                  return userData;
+            });
+        })
+
+        Promise.all(dataToDownload).then(res => {
+            this.setState({ dataToDownload: res }, () => {
+                this.csvLink.link.click()
+            })
+        })
+    };
+
     render() {
         const { classes, usersList } = this.props;
         const { dataToDownload } = this.state;
@@ -116,7 +152,8 @@ class UsersList extends Component {
                 <CSVLink data={dataToDownload} ref={(r) => this.csvLink = r} filename={`user_data.csv`}/>
 
                 <Button style={{marginBottom:6}} variant="outlined" fullWidth onClick={this.handleDownloadUsers(usersList)}>Baixar lista de usuários</Button>
-                <Button style={{marginBottom:16}} variant="outlined" fullWidth onClick={this.handleDownloadResults(usersList)}>Baixar lista de resultados</Button>
+                <Button style={{marginBottom:6}} variant="outlined" fullWidth onClick={this.handleDownloadResults(usersList)}>Baixar lista de resultados</Button>
+                <Button style={{marginBottom:16}} variant="outlined" fullWidth onClick={this.handleDownloadVolume(usersList)}>Baixar volume por usuário</Button>
 
                 {usersList.map((user, index) => (
                     <ExpansionPanel key={index}>

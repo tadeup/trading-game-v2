@@ -82,7 +82,7 @@ class Book extends Component {
                 sellOffersReduced.push({...el})
             }
         });
-        sellOffersReduced=sellOffersReduced.slice(Math.max(sellOffersReduced.length - 9, 1))
+        sellOffersReduced=sellOffersReduced.slice(Math.max(sellOffersReduced.length - 9, 0))
 
         const buyOffersReduced = [];
         buyOffers.forEach((el, index)=>{
@@ -227,7 +227,7 @@ export default compose(
                     ['offerIsBuy', '==', true],
                 ],
                 orderBy: ['offerPrice', 'desc'],
-                limit: 30,
+                limit: 40,
                 storeAs: 'buyOffers'
             },
             {
@@ -239,7 +239,7 @@ export default compose(
                     ['offerIsBuy', '==', false],
                 ],
                 orderBy: ['offerPrice'],
-                limit: 30,
+                limit: 40,
                 storeAs: 'sellOffers'
             }
         ]

@@ -18,3 +18,15 @@ exports.newAsset = functions.https.onCall(newAsset(admin));
 exports.deleteOffers = functions.https.onCall(deleteOffers(admin));
 
 exports.newUser = functions.https.onCall(newUser(admin));
+
+exports.onDeleteUser = functions.auth.user().onDelete((user) => {
+  const db = admin.firestore();
+  return db.collection('users').doc(user.uid).delete()
+    .then(() => {
+      return {success: true,};
+    })
+    .catch(function(error) {
+      console.log('Error deleting user:', error);
+      return {success: false, error: error};
+    });
+});
